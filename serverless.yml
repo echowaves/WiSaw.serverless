@@ -21,9 +21,9 @@ functions:
 
   helloWorld:
     handler: functions/hello_world.main
-    description: greetings message
+    description: greetings message for world
     events:
       - http:
-          path: api/hello
+          path: hello
           method: get
           private: false
