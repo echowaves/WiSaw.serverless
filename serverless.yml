@@ -1,0 +1,29 @@
+service: wisaw
+
+
+# Use serverless-webpack plugin to transpile ES6/ES7
+plugins:
+  - serverless-webpack
+# Enable auto-packing of external modules
+custom:
+  webpackIncludeModules: true
+  env: ${file(env.yml):${opt:stage}}
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  memorySize: 128
+  timeout: 30
+  versionFunctions: false # optional, default is true
+
+
+functions:
+
+  helloWorld:
+    handler: functions/hello_world.main
+    description: greetings message
+    events:
+      - http:
+          path: api/hello
+          method: get
+          private: false
