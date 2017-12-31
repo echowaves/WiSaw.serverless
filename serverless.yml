@@ -20,7 +20,7 @@ provider:
 functions:
 
   helloWorld:
-    handler: functions/hello_world.main
+    handler: api/src/hello_world.main
     description: greetings message for world
     events:
       - http:
