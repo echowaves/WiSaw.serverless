@@ -7,7 +7,7 @@
     "deploy": "./node_modules/serverless/bin/serverless deploy --stage prod --region us-east-1 -v",
     "remove": "./node_modules/serverless/bin/serverless remove --stage prod --region us-east-1 -v",
     "info": "./node_modules/serverless/bin/serverless info --stage prod --region us-east-1 -v",
-    "logs": "./node_modules/serverless/bin/serverless logs -f helloWorld -t --stage prod --region us-east-1",
+    "logs": "./node_modules/serverless/bin/serverless logs -f cleanupPhotos -t --stage prod --region us-east-1",
     "test": "./node_modules/mocha/bin/mocha --require babel-core/register ./tests/**/*.js --timeout 30000 || exit 0"
   },
   "repository": {

@@ -27,3 +27,11 @@ functions:
           path: hello
           method: get
           private: false
+  cleanupPhotos:
+    handler: api/src/controllers/photos/cleanupPhotos.main
+    description: greetings message for world
+    events:
+      - http:
+          path: cleanupPhotos
+          method: get
+          private: false
