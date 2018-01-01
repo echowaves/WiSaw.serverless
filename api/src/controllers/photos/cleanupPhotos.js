@@ -5,7 +5,7 @@ import Sequelize from 'sequelize'
 
 export  async function main(event, context, callback) {
 
-  console.log("cleaning up the photos")
+  console.log("cleaning up old photos")
   // cleanup photos
   var results = {"test": "test"}
   var rowids = {}
