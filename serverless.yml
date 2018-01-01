@@ -7,7 +7,7 @@ plugins:
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
-  env: ${file(env.yml):${opt:stage}}
+# env: ${file(env.yml):${opt:stage}}
 
 provider:
   name: aws
@@ -18,7 +18,6 @@ provider:
 
 
 functions:
-
   helloWorld:
     handler: api/src/hello_world.main
     description: greetings message for world
@@ -29,7 +28,7 @@ functions:
           private: false
   cleanupPhotos:
     handler: api/src/controllers/photos/cleanupPhotos.main
-    description: greetings message for world
+    description: cleaning up old photos
     events:
       - http:
           path: cleanupPhotos
