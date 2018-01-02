@@ -29,8 +29,8 @@
     "babel-runtime": "^6.26.0",
     "moment": "^2.19.3",
     "pg": "^7.4.0",
-    "sequelize": "^4.15.1",
-    "sequelize-cli": "^3.0.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.28.6",
     "sharp": "^0.18.4",
     "uuid": "^3.1.0"
   },

@@ -13,9 +13,7 @@ export  async function main(event, context, callback) {
       body: JSON.stringify(message)
     }
     // console.log("debug:", 4)
-
     callback(null, response)
-
   } catch (error) {
     console.log("error from calling API:", error.response.data)
 

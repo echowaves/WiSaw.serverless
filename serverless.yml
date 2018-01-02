@@ -7,7 +7,6 @@ plugins:
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
-# env: ${file(env.yml):${opt:stage}}
 
 provider:
   name: aws
