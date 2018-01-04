@@ -38,5 +38,5 @@ functions:
     description: cleaning up old photos periodically once an hour
     events:
       - schedule:
-          rate: rate(5 minutes)
+          rate: rate(1 hour)
           enabled: true
