@@ -60,4 +60,4 @@ typings/
 .serverless
 
 
-.db.prod.yml
+.env.prod.yml
