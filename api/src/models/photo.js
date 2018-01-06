@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize'
 import {sequelize} from '../../../consts'
-import logger from '../../../lib/logger'
 
 var Photo = sequelize.define('Photo', {
 

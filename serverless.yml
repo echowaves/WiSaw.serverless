@@ -17,15 +17,15 @@ provider:
 
 
 functions:
-  helloWorld:
-    handler: api/src/hello_world.main
+  helloWorld: # just for testing purposes
+    handler: api/src/controllers/hello_world.main
     description: greetings message for world
     events:
       - http:
           path: hello
           method: get
           private: false
-  cleanupPhotos:
+  cleanupPhotos: # http endpoint
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos
     events:
@@ -33,7 +33,7 @@ functions:
           path: cleanupPhotos
           method: get
           private: false
-  cleanupPhotosContinuously:
+  cleanupPhotosContinuously: # the same as above (reusing the same function), but is invoked by a scheduler
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos periodically once an hour
     events:

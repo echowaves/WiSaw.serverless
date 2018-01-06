@@ -2,7 +2,7 @@ export  async function main(event, context, callback) {
   // parameters passed into the call
   // console.log("debug:", 1)
 
-  const message = "Hello world!"
+  const message = "Hello WiSaw world!"
 
   var response
 
