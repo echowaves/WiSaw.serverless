@@ -3,8 +3,6 @@ import pg from 'pg' //this is needed for initialization purpose, although we nev
 import pg_hstore from 'pg-hstore' // the same as above
 
 
-console.log("database_url", process.env.DATABASE_URL)
-
 export var sequelize = new Sequelize(process.env.DATABASE_URL)
 
 sequelize

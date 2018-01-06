@@ -14,10 +14,12 @@ provider:
   memorySize: 128
   timeout: 30
   versionFunctions: false # optional, default is true
+  environment:
+    DATABASE_URL: ${file(.db.${opt:stage}.yml):DATABASE_URL} 
 
 
 functions:
-  helloWorld: # just for testing purposes
+  helloWorldRead: # just for testing purposes
     handler: api/src/controllers/hello_world.main
     description: greetings message for world
     events:
@@ -25,18 +27,26 @@ functions:
           path: hello
           method: get
           private: false
-  cleanupPhotos: # http endpoint
+  photosCleanup: # http endpoint
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos
     events:
       - http:
-          path: cleanupPhotos
+          path: photos/cleanup
           method: get
           private: false
-  cleanupPhotosContinuously: # the same as above (reusing the same function), but is invoked by a scheduler
+  photosCleanupContinuously: # the same as above (reusing the same function), but is invoked by a scheduler
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos periodically once an hour
     events:
       - schedule:
           rate: rate(1 hour)
           enabled: true
+  abuseReportCreate: # http endpoint
+    handler: api/src/controllers/abuseReports/create.main
+    description: cleaning up old photos
+    events:
+      - http:
+          path: /abusereport
+          method: post
+          private: false

@@ -58,3 +58,6 @@ typings/
 .env
 
 .serverless
+
+
+.db.prod.yml
