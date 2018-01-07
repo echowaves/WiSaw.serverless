@@ -61,4 +61,5 @@ typings/
 
 
 .env.prod.yml
+.env.test.yml
 .env.dev.yml
