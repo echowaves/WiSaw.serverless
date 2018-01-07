@@ -60,6 +60,6 @@ typings/
 .serverless
 
 
-.env.prod.yml
-.env.test.yml
-.env.dev.yml
+.env.prod.js
+.env.test.js
+.env.dev.js

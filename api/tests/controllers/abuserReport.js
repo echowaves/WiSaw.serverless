@@ -9,7 +9,7 @@ const expect = chai.expect  // BDD/TDD assertion library
 import uuid from 'uuid'
 import fs from 'fs'
 
-describe('/api/abusereport', () => {
+describe('/abusereport', () => {
 
   it.only('should not be able to post an abuseReport with no parameters',  async ()  => {
     var response =
