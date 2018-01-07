@@ -1,13 +1,15 @@
 import assert from 'assert'
-import host from '../../../host'
+import devconfig from '../../../devconfig'
 import supertest from 'supertest'
 import chai from 'chai'
 
-const request = supertest(host)
+console.log("devconfig.HOST", devconfig.HOST)
+
+const request = supertest(devconfig.HOST)
 const expect = chai.expect  // BDD/TDD assertion library
 
 describe('/hello', () => {
-  it('should be able respond to a health check',  async ()  => {
+  it.only('should be able respond to a health check',  async ()  => {
     var response =
     await request
       .get('/hello')

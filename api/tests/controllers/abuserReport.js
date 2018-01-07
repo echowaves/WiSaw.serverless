@@ -1,9 +1,9 @@
 import assert from 'assert'
-import host from '../../../host'
+import devconfig from '../../../devconfig'
 import supertest from 'supertest'
 import chai from 'chai'
 
-const request = supertest(host)
+const request = supertest(devconfig.HOST)
 const expect = chai.expect  // BDD/TDD assertion library
 
 import uuid from 'uuid'
@@ -11,7 +11,7 @@ import fs from 'fs'
 
 describe('/api/abusereport', () => {
 
-  it.only('should not be able to post an abuseReport with no parameters',  async ()  => {
+  it('should not be able to post an abuseReport with no parameters',  async ()  => {
     var response =
     await request
       .post('/abusereport')
