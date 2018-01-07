@@ -8,7 +8,9 @@
     "info": "./node_modules/serverless/bin/serverless info --region us-east-1 -v --stage",
     "logs": "./node_modules/serverless/bin/serverless logs -f abuseReportCreate -t --region us-east-1 --stage",
     "test": "./node_modules/mocha/bin/mocha --require babel-core/register ./api/tests/**/*.js --timeout 30000 || exit 0",
-    "test-coverage": "NODE_ENV=dev istanbul cover _mocha —- -R spec"
+    "coverage": "NODE_ENV=dev istanbul cover _mocha —- -R spec",
+    "migrate": "./node_modules/.bin/sequelize $@"
+
   },
   "repository": {
     "type": "git",
