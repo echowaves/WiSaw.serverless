@@ -7,8 +7,7 @@
     "deploy": "./node_modules/serverless/bin/serverless deploy --region us-east-1 -v --stage",
     "info": "./node_modules/serverless/bin/serverless info --region us-east-1 -v --stage",
     "logs": "./node_modules/serverless/bin/serverless logs -f abuseReportCreate -t --region us-east-1 --stage",
-    "test": "./node_modules/mocha/bin/mocha --require babel-core/register ./api/tests/**/*.js --timeout 30000 || exit 0",
-    "coverage": "NODE_ENV=dev istanbul cover _mocha —- -R spec",
+    "test": "./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha --require babel-core/register ./api/tests/**/*.js --timeout 30000 || exit 0",
     "migrate": "./node_modules/.bin/sequelize $@"
   },
   "repository": {
@@ -44,8 +43,8 @@
     "babel-preset-stage-3": "^6.24.1",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
-    "istanbul": "^0.4.5",
     "mocha": "^4.0.1",
+    "nyc": "^11.4.1",
     "serverless": "^1.25.0",
     "serverless-webpack": "^4.2.0",
     "supertest": "^3.0.0",
