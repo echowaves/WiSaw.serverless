@@ -12,7 +12,3 @@ last argument is stage (requred), either dev or prod
 
 the test scripts are always executing on dev stage and never on prod, if tests pass on dev -- it will work on prod for sure
   npm run test
-  npm run coverage
-
-
-  
