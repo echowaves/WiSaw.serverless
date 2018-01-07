@@ -16,6 +16,7 @@ provider:
   versionFunctions: false # optional, default is true
   environment:
     DATABASE_URL: ${file(.env.${opt:stage}.yml):DATABASE_URL}
+    HOST: ${file(.env.${opt:stage}.yml):HOST}
 
 
 functions:
