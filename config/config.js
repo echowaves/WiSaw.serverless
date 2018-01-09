@@ -1,8 +1,7 @@
 const argv = require('yargs').argv
 
-const env = argv.env || "test";
+const env = argv.env || "test";// default to test stage
 
-console.log("env", env);
 const config = require('../.env.'+ env).config();
 
 
