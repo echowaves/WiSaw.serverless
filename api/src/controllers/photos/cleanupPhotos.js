@@ -9,13 +9,15 @@ export  async function main(event, context, callback) {
 
   console.log("cleaning up old photos")
   // cleanup photos
-  var results = {"test": "test"}
+  var results = {"photos": "not found"}
   var rowids = {}
   var count = {}
   try {
     await sequelize.query('DELETE FROM \"AbuseReports\" where \"createdAt\" < NOW() - INTERVAL \'7 days\'')
     rowids = await sequelize.query('select id from (select id from \"Photos\" order by id desc  limit 75) as r order by id limit 1')
-    results = await sequelize.query('DELETE FROM \"Photos\" where \"createdAt\" < NOW() - INTERVAL \'24 hours\' and id < ' + rowids[0][0].id)
+    if(rowids[0].length > 0) {
+      results = await sequelize.query('DELETE FROM \"Photos\" where \"createdAt\" < NOW() - INTERVAL \'24 hours\' and id < ' + rowids[0][0].id)
+    }
     count = await sequelize.query('select count(*) FROM \"Photos\"')
 
   } catch(err) {
@@ -30,13 +32,16 @@ export  async function main(event, context, callback) {
   console.log("results: " , results)
 
   var response
+  var rowid = rowids[0].length > 0 ? rowids[0][0].id : 0
+
+
   try {
     response = {
       statusCode: 200,
       body: JSON.stringify({
         status: 'success',
         results,
-        rowid: rowids[0][0].id,
+        rowid,
         count
       })
     }
