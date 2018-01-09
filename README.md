@@ -32,7 +32,7 @@ npm run migrate-undo prod
 ## Configuration files
 There are 3 independent areas which require DB configuration. Unfortunately each one of these does it slightly differently. The bruit force approach would be to duplicate the DB config for every area. We actually figured out how to keep the DB config in one file and propagate it where expected.
 
-Take a look at ```.env.sample.yml```. This file is the example which is versioned controlled. You need to clone this file into ```.env.prod.js``` and ```.env.test.js``` -- these files are gitignored, so it's important not to loose them.
+Take a look at ```.env.sample.yml```. This file is the example which is versioned controlled. You need to clone this file into ```.env.prod.js``` and ```.env.test.js``` -- these files are gitignored -- we do not want to expose life DB connection config to the world, so it's important not to loose them.
 
 The ```serverless.yml``` file will read the stage specific file in the provider section:
 ```
