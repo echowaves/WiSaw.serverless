@@ -44,9 +44,17 @@ functions:
           enabled: true
   abuseReportCreate: # http endpoint
     handler: api/src/controllers/abuseReports/create.main
-    description: cleaning up old photos
+    description: create an abuse report record
     events:
       - http:
           path: /abusereport
+          method: post
+          private: false
+  contactFormCreate: # http endpoint
+    handler: api/src/controllers/contactForms/create.main
+    description: create contact form record
+    events:
+      - http:
+          path: /contactform
           method: post
           private: false

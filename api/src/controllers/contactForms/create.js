@@ -1,7 +1,8 @@
-import AbuseReport from '../../models/abuseReport'
+import ContactForm from '../../models/contactForm'
 
 import moment from 'moment'
 import Sequelize from 'sequelize'
+
 
 export  async function main(event, context, callback) {
   //Instruct the lambda to exit immediately
@@ -9,10 +10,12 @@ export  async function main(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false
   const data = JSON.parse(event.body);
 
-  // console.log({data})
   const uuid = data ? data.uuid : null
 
-  if(!data || !uuid) {
+
+  const description = data ? data.description : null
+
+  if(!data || !uuid || !description) {
     console.log("setting status to 400")
     const response = {
       statusCode: 400,
@@ -25,28 +28,29 @@ export  async function main(event, context, callback) {
   const updatedAt = createdAt
 
   // create and safe record
-    let abuseReport
-    try {
-      abuseReport = await AbuseReport.create({
-        uuid,
-        createdAt,
-        updatedAt
-      })
-    } catch(err) {
-      console.log("unable to create AbuseReport", err)
-      const response = {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Unable to Report Abuse'})
-      }
-      callback(null, response)
-      return
-    }
-
-
-    // Resond to request indicating the aubse report was created
+  let contactForm
+  try {
+    contactForm = await ContactForm.create({
+      uuid,
+      description,
+      createdAt,
+      updatedAt
+    })
+  } catch(err) {
+    console.log("unable to create contactForm", err)
     const response = {
-      statusCode: 201,
-      body: JSON.stringify({ status: 'success' })
+      statusCode: 500,
+      body: JSON.stringify({ error: 'unable to create contactForm'})
     }
     callback(null, response)
+    return
   }
+
+
+  // Resond to request indicating the create contactForm was created
+  const response = {
+    statusCode: 201,
+    body: JSON.stringify({ status: 'success' })
+  }
+  callback(null, response)
+}
