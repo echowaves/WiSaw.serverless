@@ -6,7 +6,7 @@
   "scripts": {
     "deploy": "./node_modules/serverless/bin/serverless deploy --region us-east-1 -v --stage",
     "info": "./node_modules/serverless/bin/serverless info --region us-east-1 -v --stage",
-    "log": "./node_modules/serverless/bin/serverless logs -f photosCleanup -t --region us-east-1 --stage",
+    "log": "./node_modules/serverless/bin/serverless logs -f abuseReportCreate -t --region us-east-1 --stage",
     "test": "./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha --require babel-core/register ./api/tests/**/*.js --timeout 30000 || exit 0",
     "migrate": "./node_modules/.bin/sequelize db:migrate --env",
     "migrate-undo": "./node_modules/.bin/sequelize db:migrate:undo --env"

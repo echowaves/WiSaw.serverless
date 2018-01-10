@@ -6,13 +6,18 @@ export  async function main(event, context, callback) {
   //Instruct the lambda to exit immediately
   //and not wait for node event loop to be empty.
   context.callbackWaitsForEmptyEventLoop = false
+  const data = JSON.parse(event.body);
 
-  const uuid = ctx.request.body.uuid
+  // console.log({data})
+  const uuid = data ? data.uuid : null
 
-  if(!uuid ) {
-    logger.debug("setting status to 400")
-    ctx.response.status = 400
-    ctx.body = { error: 'parameters missing'}
+  if(!data || !uuid) {
+    console.log("setting status to 400")
+    const response = {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'parameters missing'})
+    }
+    callback(null, response)
     return
   }
   const createdAt = moment()
@@ -27,14 +32,20 @@ export  async function main(event, context, callback) {
         updatedAt
       })
     } catch(err) {
-      logger.error("unable to create AbuseReport", err)
-      ctx.response.status = 500
-      ctx.body = { error: 'Unable to Report Abuse'}
+      console.log("unable to create AbuseReport", err)
+      const response = {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Unable to Report Abuse'})
+      }
+      callback(null, response)
       return
     }
 
 
     // Resond to request indicating the aubse report was created
-    ctx.response.status = 201
-    ctx.body = { status: 'success' }
+    const response = {
+      statusCode: 201,
+      body: JSON.stringify({ status: 'success' })
+    }
+    callback(null, response)
   }

@@ -27,6 +27,7 @@ export  async function main(event, context, callback) {
       body: JSON.stringify({ error: 'Unable to cleanup Photos', err})
     }
     callback(null, response)
+    return
   }
 
   console.log("results: " , results)

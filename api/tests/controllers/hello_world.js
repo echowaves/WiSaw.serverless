@@ -8,7 +8,7 @@ const request = supertest(config().HOST)
 const expect = chai.expect  // BDD/TDD assertion library
 
 describe('/hello', () => {
-  it.only('should be able respond to a health check',  async ()  => {
+  it('should be able respond to a health check',  async ()  => {
     var response =
     await request
       .get('/hello')

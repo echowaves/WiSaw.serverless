@@ -28,7 +28,7 @@ describe('/abusereport', () => {
 
     var response =
     await request
-      .post('/api/abusereport')
+      .post('/abusereport')
       .set('Content-Type', 'application/json')
       .send({uuid: guid})
 
@@ -43,31 +43,31 @@ describe('/abusereport', () => {
     var point = { type: 'Point', coordinates: [-29.396377, -137.585190]};
     var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
 
-    logger.debug("contents.size: ", contents.length)
+    console.log("contents.size: ", contents.length)
 
 
 //post 4 abuse reports for a particular UUID
     await request
-    .post('/api/abusereport')
+    .post('/abusereport')
     .set('Content-Type', 'application/json')
     .send({uuid: guid})
     await request
-    .post('/api/abusereport')
+    .post('/abusereport')
     .set('Content-Type', 'application/json')
     .send({uuid: guid})
     await request
-    .post('/api/abusereport')
+    .post('/abusereport')
     .set('Content-Type', 'application/json')
     .send({uuid: guid})
     await request
-    .post('/api/abusereport')
+    .post('/abusereport')
     .set('Content-Type', 'application/json')
     .send({uuid: guid})
 
 
     var response =
     await request
-      .post('/api/photos')
+      .post('/photos')
       .set('Content-Type', 'application/json')
       .send({uuid: guid})
       .send({location: point})
