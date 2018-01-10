@@ -1,3 +1,6 @@
+import AbuseReport from '../../models/abuseReport'
+
+
 import moment from 'moment'
 import Sequelize from 'sequelize'
 import {sequelize} from '../../../../consts'
