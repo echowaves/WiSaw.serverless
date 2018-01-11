@@ -30,7 +30,7 @@ describe('/photos', () => {
     var point = { type: 'Point', coordinates: [-29.396377, -137.585190]};
     var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
 
-    console.log("contents.size: ", contents.length)
+    // console.log("contents.size: ", contents.length)
 
     var response =
     await request
@@ -79,7 +79,7 @@ describe('/photos', () => {
     expect(response.status).to.equal(200)
     expect(response.body.status).to.equal('success')
 
-    console.log("photos: ", response.body.photos.length)
+    // console.log("photos: ", response.body.photos.length)
     // logger.debug("photos: ", response.body.photos[0])
   })
 
@@ -120,8 +120,6 @@ describe('/photos', () => {
 
 
   it('should not be able to get non existing photo by id',  async ()  => {
-
-
     var response =
     await request
       .get('/photos/' + 0)
@@ -135,17 +133,24 @@ describe('/photos', () => {
 
 
 
-  it.only('should be able to delete a photo by id',  async ()  => {
-    var photo = await Photo.findOne({
-      attributes: {
-        exclude: ['imageData']
-      }
-    })
+  it('should be able to delete a photo by id',  async ()  => {
+    let guid = uuid()
+
+    var point = { type: 'Point', coordinates: [-29.396377, -137.585190]};
+    var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
+
+    var photo_response =
+    await request
+      .post('/photos')
+      .set('Content-Type', 'application/json')
+      .send({uuid: guid})
+      .send({location: point})
+      .send({imageData: contents})
 
 
     var response =
     await request
-      .delete('/api/photos/' + photo.id )
+      .delete('/photos/' + photo_response.body.id )
       .set('Content-Type', 'application/json')
 
 

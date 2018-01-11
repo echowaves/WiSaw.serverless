@@ -83,3 +83,11 @@ functions:
           path: /photos/{id}
           method: get
           private: false
+  photosDelete: # http endpoint
+    handler: api/src/controllers/photos/delete.main
+    description: (CRU'D') - photo
+    events:
+      - http:
+          path: /photos/{id}
+          method: delete
+          private: false

@@ -12,35 +12,25 @@ export  async function main(event, context, callback) {
   // retrieve photos
   let photo
   try {
-      photo = await Photo.findOne({
-        where: { id }
-      })
-  } catch(err) {
-    console.log("Unable to retrieve a Photo", err)
+    photo = await Photo.destroy({
+      where: { id }
+    })
 
+  } catch(err) {
+    console.log("Unable to delete a Photo", err)
     const response = {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Unable to retrieve a Photo'})
-    }
-    callback(null, response)
-    return
-  }
-
-  if(!photo) {
-    const response = {
-      statusCode: 404,
-      body: JSON.stringify({ error: 'not found' })
+      body: JSON.stringify({ error: 'Unable to delete a Photo'})
     }
     callback(null, response)
     return
   }
 
 
-
-  // Resond to request indicating the photo was created
+  // the photo was deteled
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ status: 'success', photo })
+    body: JSON.stringify({ status: 'success' })
   }
   callback(null, response)
-  }
+}
