@@ -37,13 +37,13 @@ describe('/abusereport', () => {
   })
 
 
-  it('should not be able to post a photo wben too many abuses reported',  async ()  => {
+  it.only('should not be able to post a photo wben too many abuses reported',  async ()  => {
     let guid = uuid()
 
     var point = { type: 'Point', coordinates: [-29.396377, -137.585190]};
     var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
 
-    console.log("contents.size: ", contents.length)
+    // console.log("contents.size: ", contents.length)
 
 
 //post 4 abuse reports for a particular UUID

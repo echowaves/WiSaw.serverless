@@ -8,7 +8,7 @@ export  async function main(event, context, callback) {
   //Instruct the lambda to exit immediately
   //and not wait for node event loop to be empty.
   context.callbackWaitsForEmptyEventLoop = false
-  const data = JSON.parse(event.body);
+  const data = JSON.parse(event.body)
 
   const uuid = data ? data.uuid : null
 
