@@ -4,7 +4,6 @@ import pg_hstore from 'pg-hstore' // the same as above
 
 
 export var sequelize = new Sequelize(process.env.DATABASE_URL, {
-
   // disable logging; default: console.log
   logging: false
 })

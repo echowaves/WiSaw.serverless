@@ -60,10 +60,18 @@ functions:
           enabled: true
   photosCreate: # http endpoint
     handler: api/src/controllers/photos/create.main
-    description: create a photo record
-    memorySize: 300
+    description: ('C'RUD) - photo
+    memorySize: 300 # need to allocate more memory for Jimp image processing
     events:
       - http:
           path: /photos
+          method: post
+          private: false
+  photosFeed: # http endpoint
+    handler: api/src/controllers/photos/feed.main
+    description: photos feed
+    events:
+      - http:
+          path: /photos/feed
           method: post
           private: false
