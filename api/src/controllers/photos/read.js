@@ -15,6 +15,14 @@ export  async function main(event, context, callback) {
       photo = await Photo.findOne({
         where: { id }
       })
+      if(!photo) {
+        const response = {
+          statusCode: 404,
+          body: JSON.stringify({ error: 'not found' })
+        }
+        callback(null, response)
+        return
+      }
   } catch(err) {
     console.log("Unable to retrieve a Photo", err)
 
@@ -25,16 +33,6 @@ export  async function main(event, context, callback) {
     callback(null, response)
     return
   }
-
-  if(!photo) {
-    const response = {
-      statusCode: 404,
-      body: JSON.stringify({ error: 'not found' })
-    }
-    callback(null, response)
-    return
-  }
-
 
 
   // Resond to request indicating the photo was created

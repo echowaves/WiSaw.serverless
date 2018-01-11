@@ -132,7 +132,6 @@ describe('/photos', () => {
   })
 
 
-
   it('should be able to delete a photo by id',  async ()  => {
     let guid = uuid()
 
@@ -147,7 +146,6 @@ describe('/photos', () => {
       .send({location: point})
       .send({imageData: contents})
 
-
     var response =
     await request
       .delete('/photos/' + photo_response.body.id )
@@ -158,5 +156,18 @@ describe('/photos', () => {
     expect(response.body.status).to.equal('success')
 
   })
+
+
+  it('should not be able to delete non existing photo by id',  async ()  => {
+    var response =
+    await request
+      .delete('/photos/' + 0)
+      .set('Content-Type', 'application/json')
+
+
+    expect(response.status).to.equal(404)
+    expect(response.body.error).to.equal('not found')
+  })
+
 
 })

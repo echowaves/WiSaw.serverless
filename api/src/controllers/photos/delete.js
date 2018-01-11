@@ -15,6 +15,14 @@ export  async function main(event, context, callback) {
     photo = await Photo.destroy({
       where: { id }
     })
+    if(!photo) {
+      const response = {
+        statusCode: 404,
+        body: JSON.stringify({ error: 'not found' })
+      }
+      callback(null, response)
+      return
+    }
 
   } catch(err) {
     console.log("Unable to delete a Photo", err)
