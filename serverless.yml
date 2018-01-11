@@ -75,3 +75,11 @@ functions:
           path: /photos/feed
           method: post
           private: false
+  photosRead: # http endpoint
+    handler: api/src/controllers/photos/read.main
+    description: (C'R'UD) - photo
+    events:
+      - http:
+          path: /photos/{id}
+          method: get
+          private: false

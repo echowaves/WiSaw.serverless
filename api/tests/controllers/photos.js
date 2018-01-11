@@ -84,16 +84,24 @@ describe('/photos', () => {
   })
 
 
-  it.only('should be able to get one photo by id',  async ()  => {
-    var photo = await Photo.findOne({
-      attributes: {
-        exclude: ['imageData']
-      }
-    })
+  it('should be able to get one photo by id',  async ()  => {
+    let guid = uuid()
+
+    var point = { type: 'Point', coordinates: [-29.396377, -137.585190]};
+    var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
+
+    var photo_response =
+    await request
+      .post('/photos')
+      .set('Content-Type', 'application/json')
+      .send({uuid: guid})
+      .send({location: point})
+      .send({imageData: contents})
+
 
     var response =
     await request
-      .get('/api/photos/' + photo.id )
+      .get('/photos/' + photo_response.body.id)
       .set('Content-Type', 'application/json')
 
     expect(response.body.photo).to.have.property('id')
@@ -104,9 +112,10 @@ describe('/photos', () => {
     expect(response.body.photo).to.have.property('createdAt')
     expect(response.body.photo).to.not.have.property('distance')
 
+    expect(response.body.photo.id).to.eq(photo_response.body.id)
+
     expect(response.status).to.equal(200)
     expect(response.body.status).to.equal('success')
-
   })
 
 
@@ -115,7 +124,7 @@ describe('/photos', () => {
 
     var response =
     await request
-      .get('/api/photos/' + 0)
+      .get('/photos/' + 0)
       .set('Content-Type', 'application/json')
 
 
@@ -126,7 +135,7 @@ describe('/photos', () => {
 
 
 
-  it('should be able to delete a photo by id',  async ()  => {
+  it.only('should be able to delete a photo by id',  async ()  => {
     var photo = await Photo.findOne({
       attributes: {
         exclude: ['imageData']
