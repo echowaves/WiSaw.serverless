@@ -37,7 +37,7 @@ describe('/abusereport', () => {
   })
 
 
-  it.only('should not be able to post a photo wben too many abuses reported',  async ()  => {
+  it('should not be able to post a photo wben too many abuses reported',  async ()  => {
     let guid = uuid()
 
     var point = { type: 'Point', coordinates: [-29.396377, -137.585190]};
