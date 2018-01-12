@@ -83,6 +83,22 @@ functions:
           path: /photos/{id}
           method: get
           private: false
+  # photosThumb: # http endpoint
+  #   handler: api/src/controllers/photos/thumb.main
+  #   description: photos thumb image
+  #   events:
+  #     - http:
+  #         path: /photos/{id}/thumb
+  #         method: get
+  #         private: false
+  # photosFull: # http endpoint
+  #   handler: api/src/controllers/photos/full.main
+  #   description: photos full image
+  #   events:
+  #     - http:
+  #         path: /photos/{id}/full
+  #         method: get
+  #         private: false
   photosDelete: # http endpoint
     handler: api/src/controllers/photos/delete.main
     description: (CRU'D') - photo
