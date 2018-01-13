@@ -1,29 +1,26 @@
 import Sequelize from 'sequelize'
-import {sequelize} from '../../../consts'
+import { sequelize } from '../../../consts'
 
-var AbuseReport = sequelize.define('AbuseReport', {
-
+const AbuseReport = sequelize.define('AbuseReport', {
   id: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
   },
   uuid: {
     type: Sequelize.UUID,
-    allowNull: false
+    allowNull: false,
   },
   createdAt: {
     allowNull: false,
-    type: Sequelize.DATE
+    type: Sequelize.DATE,
   },
   updatedAt: {
     allowNull: false,
-    type: Sequelize.DATE
-  }
-
-});
-
+    type: Sequelize.DATE,
+  },
+})
 
 // Adding a class level method
 

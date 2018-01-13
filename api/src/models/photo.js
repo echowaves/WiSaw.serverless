@@ -1,41 +1,38 @@
 import Sequelize from 'sequelize'
-import {sequelize} from '../../../consts'
+import { sequelize } from '../../../consts'
 
-var Photo = sequelize.define('Photo', {
-
+const Photo = sequelize.define('Photo', {
   id: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
   },
   uuid: {
     type: Sequelize.UUID,
-    allowNull: false
+    allowNull: false,
   },
   location: {
     type: Sequelize.GEOMETRY('POINT'),
-    allowNull: false
+    allowNull: false,
   },
   createdAt: {
     allowNull: false,
-    type: Sequelize.DATE
+    type: Sequelize.DATE,
   },
   updatedAt: {
     allowNull: false,
-    type: Sequelize.DATE
+    type: Sequelize.DATE,
   },
   thumbNail: {
     allowNull: false,
-    type: Sequelize.BLOB
+    type: Sequelize.BLOB,
   },
   imageData: {
     allowNull: false,
-    type: Sequelize.BLOB
-  }
-
-});
-
+    type: Sequelize.BLOB,
+  },
+})
 
 // Adding a class level method
 

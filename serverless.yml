@@ -58,6 +58,15 @@ functions:
       - schedule:
           rate: rate(1 hour)
           enabled: true
+  photosFeed: # http endpoint
+    handler: api/src/controllers/photos/feed.main
+    description: photos feed
+    memorySize: 1000 # need to allocate more memory
+    events:
+      - http:
+          path: /photos/feed
+          method: post
+          private: false
   photosCreate: # http endpoint
     handler: api/src/controllers/photos/create.main
     description: ('C'RUD) - photo
@@ -65,14 +74,6 @@ functions:
     events:
       - http:
           path: /photos
-          method: post
-          private: false
-  photosFeed: # http endpoint
-    handler: api/src/controllers/photos/feed.main
-    description: photos feed
-    events:
-      - http:
-          path: /photos/feed
           method: post
           private: false
   photosRead: # http endpoint

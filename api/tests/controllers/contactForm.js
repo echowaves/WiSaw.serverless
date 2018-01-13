@@ -1,36 +1,33 @@
-import {config} from '../../../.env.test'
-
-import assert from 'assert'
+import uuid from 'uuid'
 import supertest from 'supertest'
 import chai from 'chai'
 
-const request = supertest(config().HOST)
-const expect = chai.expect  // BDD/TDD assertion library
+import { config } from '../../../.env.test'
 
-import uuid from 'uuid'
+
+const request = supertest(config().HOST)
+const { expect } = chai // BDD/TDD assertion library
 
 describe('/contactform', () => {
-
-  it('should not be able to post an contactForm with no parameters',  async ()  => {
-    var response =
+  it('should not be able to post an contactForm with no parameters', async () => {
+    const response =
     await request
-      .post('/contactform')
-      .set('Content-Type', 'application/json')
-
+        .post('/contactform')
+        .set('Content-Type', 'application/json')
 
     expect(response.status).to.equal(400)
     expect(response.body.error).to.equal('parameters missing')
   })
 
-  it('should be able to post an contactForm with right parameters',  async ()  => {
-    let guid = uuid()
-    let description = "test contact form"
-    var response =
+  it('should be able to post an contactForm with right parameters', async () => {
+    const guid = uuid()
+    const description = 'test contact form'
+    const response =
     await request
-      .post('/contactform')
-      .set('Content-Type', 'application/json')
-      .send({uuid: guid})
-      .send({description})
+        .post('/contactform')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ description })
 
     expect(response.status).to.equal(201)
     expect(response.body.status).to.equal('success')

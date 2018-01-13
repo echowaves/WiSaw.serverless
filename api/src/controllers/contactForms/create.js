@@ -1,13 +1,13 @@
+import moment from 'moment'
+
 import ContactForm from '../../models/contactForm'
 
-import moment from 'moment'
-import Sequelize from 'sequelize'
+// eslint-disable-next-line import/prefer-default-export
+export async function main(event, context, callback) {
+  // Instruct the lambda to exit immediately
+  // and not wait for node event loop to be empty.
+  context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
-
-export  async function main(event, context, callback) {
-  //Instruct the lambda to exit immediately
-  //and not wait for node event loop to be empty.
-  context.callbackWaitsForEmptyEventLoop = false
   const data = JSON.parse(event.body)
 
   const uuid = data ? data.uuid : null
@@ -15,11 +15,11 @@ export  async function main(event, context, callback) {
 
   const description = data ? data.description : null
 
-  if(!data || !uuid || !description) {
-    console.log("setting status to 400")
+  if (!data || !uuid || !description) {
+    console.log('setting status to 400')
     const response = {
       statusCode: 400,
-      body: JSON.stringify({ error: 'parameters missing'})
+      body: JSON.stringify({ error: 'parameters missing' }),
     }
     callback(null, response)
     return
@@ -28,19 +28,18 @@ export  async function main(event, context, callback) {
   const updatedAt = createdAt
 
   // create and safe record
-  let contactForm
   try {
-    contactForm = await ContactForm.create({
+    await ContactForm.create({
       uuid,
       description,
       createdAt,
-      updatedAt
+      updatedAt,
     })
-  } catch(err) {
-    console.log("unable to create contactForm", err)
+  } catch (err) {
+    console.log('unable to create contactForm', err)
     const response = {
       statusCode: 500,
-      body: JSON.stringify({ error: 'unable to create contactForm'})
+      body: JSON.stringify({ error: 'unable to create contactForm' }),
     }
     callback(null, response)
     return
@@ -50,7 +49,7 @@ export  async function main(event, context, callback) {
   // Resond to request indicating the create contactForm was created
   const response = {
     statusCode: 201,
-    body: JSON.stringify({ status: 'success' })
+    body: JSON.stringify({ status: 'success' }),
   }
   callback(null, response)
 }
