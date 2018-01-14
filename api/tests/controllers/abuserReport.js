@@ -20,7 +20,7 @@ describe('/abusereport', () => {
     expect(response.body.error).to.equal('parameters missing')
   })
 
-  it('should be able to post an abusereport with right parameters', async () => {
+  it.only('should be able to post an abusereport with right parameters', async () => {
     const guid = uuid()
 
     const response =

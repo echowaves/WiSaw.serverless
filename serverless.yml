@@ -13,13 +13,18 @@ provider:
   memorySize: 128
   timeout: 30
   versionFunctions: false # optional, default is true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::wisaw_img_${opt:stage}/*"
   environment:
     DATABASE_URL: ${file(.env.${opt:stage}.js):config.DATABASE_URL}
     HOST: ${file(.env.${opt:stage}.js):config.HOST}
 
 
 functions:
-  helloWorldRead: # just for testing purposes
+  helloWorldGet: # just for testing purposes
     handler: api/src/controllers/hello_world.main
     description: greetings message for world
     events:
@@ -27,23 +32,29 @@ functions:
           path: hello
           method: get
           private: false
-  abuseReportCreate: # http endpoint
+
+  abuseReportPost: # http endpoint
     handler: api/src/controllers/abuseReports/create.main
     description: create an abuse report record
     events:
       - http:
-          path: /abusereport
+          path: abusereport
           method: post
           private: false
-  contactFormCreate: # http endpoint
+          request:
+            parameters:
+              application/json: '{"uuid":{"type":"string"}}'
+
+
+  contactFormPost: # http endpoint
     handler: api/src/controllers/contactForms/create.main
     description: create contact form record
     events:
       - http:
-          path: /contactform
+          path: contactform
           method: post
           private: false
-  photosCleanup: # http endpoint
+  photosCleanupGet: # http endpoint
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos
     events:
@@ -51,53 +62,64 @@ functions:
           path: photos/cleanup
           method: get
           private: false
-  photosCleanupContinuously: # the same as above (reusing the same function), but is invoked by a scheduler
+  photosCleanupSchedule: # the same as above (reusing the same function), but is invoked by a scheduler
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos periodically once an hour
     events:
       - schedule:
           rate: rate(1 hour)
           enabled: true
-  photosFeed: # http endpoint
+  photosFeedPost: # http endpoint
     handler: api/src/controllers/photos/feed.main
     description: photos feed
     memorySize: 1000 # need to allocate more memory
     events:
       - http:
-          path: /photos/feed
+          path: photos/feed
           method: post
           private: false
-  photosCreate: # http endpoint
+
+  photosPost: # http endpoint, which creates a record in DB, generaes unique photo id and then genertes upload URL to eb used for direct s3 upload
     handler: api/src/controllers/photos/create.main
     description: ('C'RUD) - photo
-    memorySize: 300 # need to allocate more memory for Jimp image processing
+    # memorySize: 300 # need to allocate more memory for Jimp image processing
     events:
       - http:
-          path: /photos
+          path: photos
           method: post
           private: false
-  photosRead: # http endpoint
+
+  # photosThumbPost:
+  #     handler: api/src/controllers/photos/createThumb.main
+  #     events:
+  #       # this event type will also create the screenshots bucket and trigger
+  #       # the lambda function every time a file is uploaded (ObjectCreated)
+  #       - s3:
+  #           bucket: wisaw.img.${opt:stage}
+  #           event: s3:ObjectCreated:*
+
+  photosGet: # http endpoint
     handler: api/src/controllers/photos/read.main
     description: (C'R'UD) - photo
     events:
       - http:
-          path: /photos/{id}
+          path: photos/{id}
           method: get
           private: false
-  # photosThumb: # http endpoint
+  # photosThumbGet: # http endpoint
   #   handler: api/src/controllers/photos/thumb.main
   #   description: photos thumb image
   #   events:
   #     - http:
-  #         path: /photos/{id}/thumb
+  #         path: photos/{id}/thumb
   #         method: get
   #         private: false
-  # photosFull: # http endpoint
+  # photosFullGet: # http endpoint
   #   handler: api/src/controllers/photos/full.main
   #   description: photos full image
   #   events:
   #     - http:
-  #         path: /photos/{id}/full
+  #         path: photos/{id}/full
   #         method: get
   #         private: false
   photosDelete: # http endpoint
@@ -105,6 +127,28 @@ functions:
     description: (CRU'D') - photo
     events:
       - http:
-          path: /photos/{id}
+          path: photos/{id}
           method: delete
           private: false
+
+
+resources:
+  Resources:
+    # https://serverless.com/blog/building-a-serverless-screenshot-service-with-lambda/
+    # https://www.netlify.com/blog/2016/11/17/serverless-file-uploads/
+    UploadBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: wisaw.img.${opt:stage}
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+          - AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - HEAD
+            AllowedOrigins:
+            - "*"
+            AllowedHeaders:
+            - "*"

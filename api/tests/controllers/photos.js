@@ -21,7 +21,7 @@ describe('/photos', () => {
     expect(response.body.error).to.equal('parameters missing')
   })
 
-  it.only('should be able to post a photo with right parameters', async () => {
+  it('should be able to post a photo with right parameters', async () => {
     const guid = uuid()
     const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
     // var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]

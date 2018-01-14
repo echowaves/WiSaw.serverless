@@ -3,6 +3,7 @@ import moment from 'moment'
 import Photo from '../../models/photo'
 import AbuseReport from '../../models/abuseReport'
 
+const Jimp = require('jimp')
 const AWS = require('aws-sdk')
 
 // eslint-disable-next-line import/prefer-default-export
@@ -25,7 +26,7 @@ export async function main(event, context, callback) {
       body: JSON.stringify({ error: 'parameters missing' }),
     }
     callback(null, response)
-    return false
+    return
   }
 
   const c = await AbuseReport.count({ where: { uuid } })
@@ -36,25 +37,26 @@ export async function main(event, context, callback) {
       body: JSON.stringify({ error: 'Anauthorized.' }),
     }
     callback(null, response)
-    return false
+    return
   }
 
   console.log('imageData.length:', imageData.length)
 
-  // let thumbNail
-  // try {
-  //   const image = await Jimp.read(Buffer.from(imageData))
-  //   const { bitmap } = image
-  //     .resize(150, Jimp.AUTO)
-  //     .exifRotate()
-  //   thumbNail = bitmap.data
-  // } catch (err) {
-  //   console.log({ err })
-  // }
+  let thumbNail
+  try {
+    const image = await Jimp.read(Buffer.from(imageData))
+    const { bitmap } = image
+      .resize(150, Jimp.AUTO)
+      .exifRotate()
+    thumbNail = bitmap.data
+  } catch (err) {
+    console.log({ err })
+  }
 
   console.log('uuid:', uuid)
   console.log('location:', location)
   console.log('imageData.length:', imageData.length)
+  console.log('thumbNail.length:', thumbNail.length)
 
   const createdAt = moment()
   const updatedAt = createdAt
@@ -65,6 +67,8 @@ export async function main(event, context, callback) {
     photo = await Photo.create({
       uuid,
       location,
+      imageData,
+      thumbNail,
       createdAt,
       updatedAt,
     })
@@ -75,7 +79,7 @@ export async function main(event, context, callback) {
       body: JSON.stringify({ error: 'Unable to create a new Photo' }),
     }
     callback(null, response)
-    return false
+    return
   }
 
   // Resond to request indicating the photo was created
@@ -84,5 +88,4 @@ export async function main(event, context, callback) {
     body: JSON.stringify({ status: 'success', id: photo.id }),
   }
   callback(null, response)
-  return true
 }
