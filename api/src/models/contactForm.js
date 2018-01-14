@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize'
-import { sequelize } from '../../../consts'
+import { sequelize } from '../../../config/consts'
 
 const ContactForm = sequelize.define('ContactForm', {
   id: {

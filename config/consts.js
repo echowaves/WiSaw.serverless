@@ -14,11 +14,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 
 sequelize
   .authenticate()
-  .then(function(err) {
-    console.log('Connection to database has been established successfully.')
-  })
-  .catch(function (err) {
-    console.error('Unable to connect to the database:', err);
-  })
+  .then(err => console.log('Connection to database has been established successfully.', err))
+  .catch(err => console.error('Unable to connect to the database:', err))
 
 export default sequelize

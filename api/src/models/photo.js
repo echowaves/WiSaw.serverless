@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize'
-import { sequelize } from '../../../consts'
+import { sequelize } from '../../../config/consts'
 
 const Photo = sequelize.define('Photo', {
   id: {
@@ -23,14 +23,6 @@ const Photo = sequelize.define('Photo', {
   updatedAt: {
     allowNull: false,
     type: Sequelize.DATE,
-  },
-  thumbNail: {
-    allowNull: false,
-    type: Sequelize.BLOB,
-  },
-  imageData: {
-    allowNull: false,
-    type: Sequelize.BLOB,
   },
 })
 

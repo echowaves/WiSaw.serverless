@@ -1,33 +1,27 @@
-const argv = require('yargs').argv
-
-const env = argv.env || "test";// default to test stage
-
-const dev_config = require('../.env.sample').config();
-const test_config = require('../.env.test').config();
-const prod_config = require('../.env.prod').config();
-
-
+const devConfig = require('../.env.sample').config()
+const testConfig = require('../.env.test').config()
+const prodConfig = require('../.env.prod').config()
 
 module.exports = {
   dev: {
-    username: dev_config.DB_USERNAME,
-    password: dev_config.DB_PASSWORD,
-    database: dev_config.DB_DATABASE,
-    host: dev_config.DB_HOST,
-    dialect: dev_config.DB_DIALECT
+    username: devConfig.DB_USERNAME,
+    password: devConfig.DB_PASSWORD,
+    database: devConfig.DB_DATABASE,
+    host: devConfig.DB_HOST,
+    dialect: devConfig.DB_DIALECT,
   },
   test: {
-    username: test_config.DB_USERNAME,
-    password: test_config.DB_PASSWORD,
-    database: test_config.DB_DATABASE,
-    host: test_config.DB_HOST,
-    dialect: test_config.DB_DIALECT
+    username: testConfig.DB_USERNAME,
+    password: testConfig.DB_PASSWORD,
+    database: testConfig.DB_DATABASE,
+    host: testConfig.DB_HOST,
+    dialect: testConfig.DB_DIALECT,
   },
   prod: {
-    username: prod_config.DB_USERNAME,
-    password: prod_config.DB_PASSWORD,
-    database: prod_config.DB_DATABASE,
-    host: prod_config.DB_HOST,
-    dialect: prod_config.DB_DIALECT
-  }
-};
+    username: prodConfig.DB_USERNAME,
+    password: prodConfig.DB_PASSWORD,
+    database: prodConfig.DB_DATABASE,
+    host: prodConfig.DB_HOST,
+    dialect: prodConfig.DB_DIALECT,
+  },
+}

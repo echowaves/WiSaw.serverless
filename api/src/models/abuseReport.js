@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize'
-import { sequelize } from '../../../consts'
+import { sequelize } from '../../../config/consts'
 
 const AbuseReport = sequelize.define('AbuseReport', {
   id: {

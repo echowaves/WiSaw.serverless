@@ -1,4 +1,4 @@
-import { sequelize } from '../../../../consts'
+import { sequelize } from '../../../../config/consts'
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {

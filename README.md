@@ -46,7 +46,7 @@ provider:
     DATABASE_URL: ${file(.env.${opt:stage}.js):config.DATABASE_URL}
     HOST: ${file(.env.${opt:stage}.js):config.HOST}
 ```
-As the result, the environment variables ```DATABASE_URL``` and ```HOST``` will be made available for every service running as AWS Lambda Function on that stage. In order for a function to establish a sequelize connection, import the ```./consts.js``` like this:
+As the result, the environment variables ```DATABASE_URL``` and ```HOST``` will be made available for every service running as AWS Lambda Function on that stage. In order for a function to establish a sequelize connection, import the ```./config/consts.js``` like this:
 ```
 import {sequelize} from '../../../../consts'
 ```
@@ -56,10 +56,6 @@ export var sequelize = new Sequelize(process.env.DATABASE_URL)
 ```
 And, in order to run sequelize migrations, we are expected to create ```./config/config.js``` file. Take a look at it's contents. At the very beginning of the file read the stage specific .env file depending on which stage we run the migration for, like this:
 ```
-const argv = require('yargs').argv
-
-const env = argv.env || "test";// default to test stage
-
 const config = require('../.env.'+ env).config();
 
 ```
