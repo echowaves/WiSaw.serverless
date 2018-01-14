@@ -4,17 +4,16 @@ import pg from 'pg' // this is needed for initialization purpose, although we ne
 // eslint-disable-next-line no-unused-vars
 import pgHstore from 'pg-hstore' // the same as above
 
-const { Op } = Sequelize
-
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+// eslint-disable-next-line import/prefer-default-export
+export const sequelize = new Sequelize(process.env.DATABASE_URL, {
   // disable logging; default: console.log
   logging: false,
-  operatorsAliases: Op, // use Sequelize.Op
+  operatorsAliases: Sequelize.Op, // use Sequelize.Op
 })
 
 sequelize
   .authenticate()
-  .then(err => console.log('Connection to database has been established successfully.', err))
+  .then(() => console.log('Connection to database has been established successfully.'))
   .catch(err => console.error('Unable to connect to the database:', err))
 
-export default sequelize
+// export default sequelize

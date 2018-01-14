@@ -54,6 +54,7 @@ functions:
           path: contactform
           method: post
           private: false
+
   photosCleanupGet: # http endpoint
     handler: api/src/controllers/photos/cleanupPhotos.main
     description: cleaning up old photos
@@ -69,6 +70,7 @@ functions:
       - schedule:
           rate: rate(1 hour)
           enabled: true
+
   photosFeedPost: # http endpoint
     handler: api/src/controllers/photos/feed.main
     description: photos feed
