@@ -17,10 +17,11 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::wisaw_img_${opt:stage}/*"
+      Resource: "arn:aws:s3:::wisaw-img-${opt:stage}/*"
   environment:
     DATABASE_URL: ${file(.env.${opt:stage}.js):config.DATABASE_URL}
     HOST: ${file(.env.${opt:stage}.js):config.HOST}
+    IMAGE_BUCKET: wisaw-img-${opt:stage}
 
 
 functions:
@@ -56,7 +57,7 @@ functions:
           private: false
 
   photosCleanupGet: # http endpoint
-    handler: api/src/controllers/photos/cleanupPhotos.main
+    handler: api/src/controllers/photos/cleanup.main
     description: cleaning up old photos
     events:
       - http:
@@ -64,7 +65,7 @@ functions:
           method: get
           private: false
   photosCleanupSchedule: # the same as above (reusing the same function), but is invoked by a scheduler
-    handler: api/src/controllers/photos/cleanupPhotos.main
+    handler: api/src/controllers/photos/cleanup.main
     description: cleaning up old photos periodically once an hour
     events:
       - schedule:
@@ -90,6 +91,8 @@ functions:
           path: photos
           method: post
           private: false
+          cors: true
+
 
   # photosThumbPost:
   #     handler: api/src/controllers/photos/createThumb.main
@@ -97,7 +100,7 @@ functions:
   #       # this event type will also create the screenshots bucket and trigger
   #       # the lambda function every time a file is uploaded (ObjectCreated)
   #       - s3:
-  #           bucket: wisaw.img.${opt:stage}
+  #           bucket: wisaw-img-${opt:stage}
   #           event: s3:ObjectCreated:*
 
   photosGet: # http endpoint
@@ -141,7 +144,7 @@ resources:
     UploadBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: wisaw.img.${opt:stage}
+        BucketName: wisaw-img-${opt:stage}
         AccessControl: PublicRead
         CorsConfiguration:
           CorsRules:

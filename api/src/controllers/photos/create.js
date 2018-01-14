@@ -16,9 +16,8 @@ export async function main(event, context, callback) {
 
   const uuid = data ? data.uuid : null
   const location = data ? data.location : null
-  const imageData = data ? data.imageData : null
 
-  if (!data || !uuid || !location || !imageData) {
+  if (!data || !uuid || !location) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -39,22 +38,9 @@ export async function main(event, context, callback) {
     return false
   }
 
-  console.log('imageData.length:', imageData.length)
-
-  // let thumbNail
-  // try {
-  //   const image = await Jimp.read(Buffer.from(imageData))
-  //   const { bitmap } = image
-  //     .resize(150, Jimp.AUTO)
-  //     .exifRotate()
-  //   thumbNail = bitmap.data
-  // } catch (err) {
-  //   console.log({ err })
-  // }
 
   console.log('uuid:', uuid)
   console.log('location:', location)
-  console.log('imageData.length:', imageData.length)
 
   const createdAt = moment()
   const updatedAt = createdAt
@@ -71,17 +57,30 @@ export async function main(event, context, callback) {
   } catch (err) {
     console.log('unable to create Photo', err)
     const response = {
-      statusCode: 500,
+      statusCode: 3600,
       body: JSON.stringify({ error: 'Unable to create a new Photo' }),
     }
     callback(null, response)
     return false
   }
 
+  const s3 = new AWS.S3()
+  const s3Params = {
+    Bucket: process.env.IMAGE_BUCKET,
+    Key: `${photo.id}`,
+    ContentType: 'image/jpg',
+    Expires: 3600,
+    ACL: 'public-read',
+  }
+  const uploadURL = s3.getSignedUrl('putObject', s3Params)
+
   // Resond to request indicating the photo was created
   const response = {
     statusCode: 201,
-    body: JSON.stringify({ status: 'success', id: photo.id }),
+    body: JSON.stringify({
+      status: 'success',
+      uploadURL,
+    }),
   }
   callback(null, response)
   return true

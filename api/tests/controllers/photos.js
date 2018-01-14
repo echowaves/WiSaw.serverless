@@ -3,12 +3,12 @@ import fs from 'fs'
 
 import supertest from 'supertest'
 import chai from 'chai'
+import axios from 'axios'
 
 import { config } from '../../../.env.test'
 
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
-
 
 describe('/photos', () => {
   it('should not be able to post a photo with no parameters', async () => {
@@ -21,24 +21,66 @@ describe('/photos', () => {
     expect(response.body.error).to.equal('parameters missing')
   })
 
-  it('should be able to post a photo with right parameters', async () => {
+  it.only('should be able to post a photo with right parameters', async () => {
     const guid = uuid()
     const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-    // var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
-    const contents = [...fs.readFileSync('./api/tests/controllers/data/large.jpg')]
 
-    // console.log("contents.size: ", contents.length)
     const response =
     await request
         .post('/photos')
         .set('Content-Type', 'application/json')
         .send({ uuid: guid })
         .send({ location: point })
-        .send({ imageData: contents })
 
     expect(response.status).to.equal(201)
     expect(response.body.status).to.equal('success')
-    expect(response.body.id).to.be.gt(0)
+    expect(response.body).to.have.property('uploadURL')
+    expect(response.body).to.have.property('s3Params')
+
+    // var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
+    const contents = Buffer.from([...fs.readFileSync('./api/tests/controllers/data/large.jpg')])
+
+    // const headers = {
+    //   'Content-Type': 'image/jpg',
+    //   'Content-Length': contents.length,
+    // }
+
+    // console.log('contents.size:', contents.length)
+    console.log('uploadURL', response.body.uploadURL)
+    console.log('s3Params', response.body.s3Params)
+    // // Send a PUT request
+    // const putResponse =
+    // await axios({
+    //     method: 'put',
+    //     url: response.body.uploadURL,
+    //     headers,
+    //     data: Buffer.from(contents),
+    //   })
+
+    // const {
+    //   ACL,
+    //   Key,
+    //   Bucket,
+    //   ContentType,
+    // } = response.body.s3Params
+
+    const options = {
+      headers: {
+        'Content-Type': 'image/jpg',
+      },
+    }
+
+    const putResponse =
+    await axios.put(response.body.uploadURL, contents, options)
+    // await s3.putObject({
+    //     uploadURL: response.body.uploadURL,
+    //     ACL,
+    //     Key,
+    //     Body: contents,
+    //     Bucket,
+    //     ContentType,
+    //   })
+    console.log({ putResponse })
   })
 
   it('should not be able to get a photo feed with no parameters', async () => {
