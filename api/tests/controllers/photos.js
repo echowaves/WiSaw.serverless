@@ -35,52 +35,21 @@ describe('/photos', () => {
     expect(response.status).to.equal(201)
     expect(response.body.status).to.equal('success')
     expect(response.body).to.have.property('uploadURL')
-    expect(response.body).to.have.property('s3Params')
 
     // var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
     const contents = Buffer.from([...fs.readFileSync('./api/tests/controllers/data/large.jpg')])
 
-    // const headers = {
-    //   'Content-Type': 'image/jpg',
-    //   'Content-Length': contents.length,
-    // }
-
     // console.log('contents.size:', contents.length)
     console.log('uploadURL', response.body.uploadURL)
-    console.log('s3Params', response.body.s3Params)
-    // // Send a PUT request
-    // const putResponse =
-    // await axios({
-    //     method: 'put',
-    //     url: response.body.uploadURL,
-    //     headers,
-    //     data: Buffer.from(contents),
-    //   })
-
-    // const {
-    //   ACL,
-    //   Key,
-    //   Bucket,
-    //   ContentType,
-    // } = response.body.s3Params
 
     const options = {
       headers: {
         'Content-Type': 'image/jpg',
+        Expires: 60 * 60 * 24 * 30, // expires in 30 days
       },
     }
 
-    const putResponse =
     await axios.put(response.body.uploadURL, contents, options)
-    // await s3.putObject({
-    //     uploadURL: response.body.uploadURL,
-    //     ACL,
-    //     Key,
-    //     Body: contents,
-    //     Bucket,
-    //     ContentType,
-    //   })
-    console.log({ putResponse })
   })
 
   it('should not be able to get a photo feed with no parameters', async () => {

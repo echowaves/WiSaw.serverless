@@ -57,7 +57,7 @@ export async function main(event, context, callback) {
   } catch (err) {
     console.log('unable to create Photo', err)
     const response = {
-      statusCode: 3600,
+      statusCode: 500,
       body: JSON.stringify({ error: 'Unable to create a new Photo' }),
     }
     callback(null, response)
@@ -69,7 +69,7 @@ export async function main(event, context, callback) {
     Bucket: process.env.IMAGE_BUCKET,
     Key: `${photo.id}`,
     ContentType: 'image/jpg',
-    Expires: 3600,
+    Expires: 60, // expires in 1 minute, after that request a new URL
     ACL: 'public-read',
   }
   const uploadURL = s3.getSignedUrl('putObject', s3Params)

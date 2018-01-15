@@ -157,3 +157,8 @@ resources:
             - "*"
             AllowedHeaders:
             - "*"
+        LifecycleConfiguration:
+          Rules:
+          - Id: ExpirationRule
+            Status: Enabled
+            ExpirationInDays: '90'
