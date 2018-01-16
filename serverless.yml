@@ -6,7 +6,7 @@ plugins:
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
-  bucket_name: wisaw-img-${opt:stage}
+  bucket_name: wisaw-img-${opt:stage} #this is the only place where the bucket name is defined -- change it here if ever have to
 
   stageVariables:
     bucketName: ${self:custom.bucket_name}
@@ -83,7 +83,7 @@ functions:
   photosFeedPost: # http endpoint
     handler: api/src/controllers/photos/feed.main
     description: photos feed
-    memorySize: 1000 # need to allocate more memory
+    # memorySize: 1000 # need to allocate more memory
     events:
       - http:
           path: photos/feed
@@ -105,10 +105,9 @@ functions:
     description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
     memorySize: 300
     events:
-      - s3:
+      - s3: # this will create the bucket
           bucket: ${self:custom.bucket_name}
           event: s3:ObjectCreated:*
-
 
   photosGet: # http endpoint
     handler: api/src/controllers/photos/read.main
@@ -145,31 +144,35 @@ functions:
 
 
 resources:
-  # Outputs:
-  #   PhotosBucket:
-  #     Description: "Photos bucket name"
-  #     Value: ${self:custom.bucket_name}
   Resources:
     # https://serverless.com/blog/building-a-serverless-screenshot-service-with-lambda/
     # https://www.netlify.com/blog/2016/11/17/serverless-file-uploads/
-    # S3BucketWisawimgtest:
-    #   Type: AWS::S3::Bucket
-    #   Properties:
-    #     BucketName: wisaw-img-test-custom
-    #     AccessControl: PublicRead
-    #     CorsConfiguration:
-    #       CorsRules:
-    #       - AllowedMethods:
-    #         - GET
-    #         - PUT
-    #         - POST
-    #         - HEAD
-    #         AllowedOrigins:
-    #         - "*"
-    #         AllowedHeaders:
-    #         - "*"
-    #     LifecycleConfiguration:
-    #       Rules:
-    #       - Id: ExpirationRule
-    #         Status: Enabled
-    #         ExpirationInDays: '1'
+    S3BucketWisawimgtest:
+      Type: AWS::S3::Bucket
+      Properties:
+        # BucketName: wisaw-img-test-custom
+        # AccessControl: PublicRead
+        # CorsConfiguration:
+        #   CorsRules:
+        #   - AllowedMethods:
+        #     - GET
+        #     - PUT
+        #     - POST
+        #     - HEAD
+        #     AllowedOrigins:
+        #     - "*"
+        #     AllowedHeaders:
+        #     - "*"
+        LifecycleConfiguration:
+          Rules:
+          - Id: ExpirationRule
+            Status: Enabled
+            ExpirationInDays: '1'
+    S3BucketWisawimgprod:
+      Type: AWS::S3::Bucket
+      Properties:
+        LifecycleConfiguration:
+          Rules:
+          - Id: ExpirationRule
+            Status: Enabled
+            ExpirationInDays: '30'
