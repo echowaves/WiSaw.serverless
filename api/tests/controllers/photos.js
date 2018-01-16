@@ -37,15 +37,14 @@ describe('/photos', () => {
     expect(response.body).to.have.property('uploadURL')
 
     // var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
-    const contents = Buffer.from([...fs.readFileSync('./api/tests/controllers/data/large.jpg')])
+    const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
 
     // console.log('contents.size:', contents.length)
-    console.log('uploadURL', response.body.uploadURL)
+    // console.log('uploadURL', response.body.uploadURL)
 
     const options = {
       headers: {
         'Content-Type': 'image/jpg',
-        Expires: 60 * 60 * 24 * 30, // expires in 30 days
       },
     }
 

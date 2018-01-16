@@ -1,91 +1,77 @@
-import moment from 'moment'
+import fs from 'fs'
+import AWS from 'aws-sdk'
+// import axios from 'axios'
 
-import Photo from '../../models/photo'
-import AbuseReport from '../../models/abuseReport'
-
-const Jimp = require('jimp')
-const AWS = require('aws-sdk')
+import { exec } from 'child_process'
 
 // eslint-disable-next-line import/prefer-default-export
-export async function main(event, context, callback) {
-  // Instruct the lambda to exit immediately
-  // and not wait for node event loop to be empty.
-  context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
-
-  const data = JSON.parse(event.body)
-  // console.log({data})
-
-  const uuid = data ? data.uuid : null
-  const location = data ? data.location : null
-  const imageData = data ? data.imageData : null
-
-  if (!data || !uuid || !location || !imageData) {
-    console.log('setting status to 400')
-    const response = {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'parameters missing' }),
-    }
-    callback(null, response)
-    return
+export async function main(event, context, cb) {
+  // define all the thumbnails that we want
+  const widths = {
+    150: '-thumbnail 150x',
   }
 
-  const c = await AbuseReport.count({ where: { uuid } })
-  console.log(`count of abuse: ${c}`)
-  if (c > 3) {
-    const response = {
-      statusCode: 401,
-      body: JSON.stringify({ error: 'Anauthorized.' }),
-    }
-    callback(null, response)
-    return
+  const record = event.Records[0];
+
+  // we only want to deal with originals
+  if (record.s3.object.key.includes('-thumb')) {
+    console.warn('Not an original, skipping')
+    cb('Not an original, skipping')
+    return false
   }
 
-  console.log('imageData.length:', imageData.length)
+  // get the prefix, and get the hash
 
-  let thumbNail
-  try {
-    const image = await Jimp.read(Buffer.from(imageData))
-    const { bitmap } = image
-      .resize(150, Jimp.AUTO)
-      .exifRotate()
-    thumbNail = bitmap.data
-  } catch (err) {
-    console.log({ err })
-  }
+  const name = record.s3.object.key
+  console.log('record.s3.bucket.name:', record.s3.bucket.name)
+  console.log('record.s3.object.key:', record.s3.object.key)
+  // download the original to disk
+  const s3 = new AWS.S3()
+  const sourcePath = `/tmp/${name}`
+  const targetStream = fs.createWriteStream(sourcePath)
+  const fileStream = s3.getObject({
+    Bucket: record.s3.bucket.name,
+    Key: record.s3.object.key,
+  }).createReadStream()
+  fileStream.pipe(targetStream)
 
-  console.log('uuid:', uuid)
-  console.log('location:', location)
-  console.log('imageData.length:', imageData.length)
-  console.log('thumbNail.length:', thumbNail.length)
+  // when file is downloaded, start processing
+  fileStream.on('end', () => {
+    // resize to every configured size
+    Object.keys(widths).forEach((size) => {
+      const tmpFileName = `/tmp/${name}-thumb-${size}`
+      const cmd = `convert ${widths[size]} ${sourcePath} ${tmpFileName}`
+      console.log('Running: ', cmd)
 
-  const createdAt = moment()
-  const updatedAt = createdAt
+      exec(cmd, (error, stdout, stderr) => { // eslint-disable-line no-unused-vars
+        if (error) {
+          // the command failed (non-zero), fail
+          console.warn(`exec error: ${error}, stdout, stderr`)
+          // continue
+        } else {
+          // resize was succesfull, upload the file
+          console.info(`Resize to ${size} OK`)
+          const fileBuffer = fs.readFileSync(tmpFileName)
+          console.log('thumb size:', fileBuffer.byteLength)
 
-  // create and safe record
-  let photo
-  try {
-    photo = await Photo.create({
-      uuid,
-      location,
-      imageData,
-      thumbNail,
-      createdAt,
-      updatedAt,
+          s3.putObject({
+            ACL: 'public-read',
+            Key: `${name}-thumb`,
+            Body: fileBuffer,
+            Bucket: record.s3.bucket.name,
+            ContentType: 'image/jpg',
+          }, (err, res) => {
+            if (err) {
+              console.log({ err })
+            }
+            console.log({ res })
+            console.log('done')
+          })
+        }
+      })
+      return true
     })
-  } catch (err) {
-    console.log('unable to create Photo', err)
-    const response = {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Unable to create a new Photo' }),
-    }
-    callback(null, response)
-    return
-  }
-
-  // Resond to request indicating the photo was created
-  const response = {
-    statusCode: 201,
-    body: JSON.stringify({ status: 'success', id: photo.id }),
-  }
-  callback(null, response)
+  })
+  cb('success')
+  return true
 }

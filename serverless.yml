@@ -6,10 +6,16 @@ plugins:
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
+  bucket_name: wisaw-img-${opt:stage}
+
+  stageVariables:
+    bucketName: ${self:custom.bucket_name}
+    # endpoint: {"Fn::Join": ["", ["https://", { "Fn::GetAtt": "CloudFrontEndpoint.DomainName" }, "/"]]}
 
 provider:
   name: aws
   runtime: nodejs6.10
+  region: us-east-1
   memorySize: 128
   timeout: 30
   versionFunctions: false # optional, default is true
@@ -17,11 +23,13 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::wisaw-img-${opt:stage}/*"
+      Resource:
+        - "arn:aws:s3:::${self:custom.bucket_name}"
+        - "arn:aws:s3:::${self:custom.bucket_name}/*"
   environment:
     DATABASE_URL: ${file(.env.${opt:stage}.js):config.DATABASE_URL}
     HOST: ${file(.env.${opt:stage}.js):config.HOST}
-    IMAGE_BUCKET: wisaw-img-${opt:stage}
+    IMAGE_BUCKET: ${self:custom.bucket_name}
 
 
 functions:
@@ -92,16 +100,15 @@ functions:
           method: post
           private: false
           cors: true
+  photosThumbsGenerate:
+    handler: api/src/controllers/photos/createThumb.main
+    description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
+    memorySize: 300
+    events:
+      - s3:
+          bucket: ${self:custom.bucket_name}
+          event: s3:ObjectCreated:*
 
-
-  # photosThumbPost:
-  #     handler: api/src/controllers/photos/createThumb.main
-  #     events:
-  #       # this event type will also create the screenshots bucket and trigger
-  #       # the lambda function every time a file is uploaded (ObjectCreated)
-  #       - s3:
-  #           bucket: wisaw-img-${opt:stage}
-  #           event: s3:ObjectCreated:*
 
   photosGet: # http endpoint
     handler: api/src/controllers/photos/read.main
@@ -138,27 +145,31 @@ functions:
 
 
 resources:
+  # Outputs:
+  #   PhotosBucket:
+  #     Description: "Photos bucket name"
+  #     Value: ${self:custom.bucket_name}
   Resources:
     # https://serverless.com/blog/building-a-serverless-screenshot-service-with-lambda/
     # https://www.netlify.com/blog/2016/11/17/serverless-file-uploads/
-    UploadBucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: wisaw-img-${opt:stage}
-        AccessControl: PublicRead
-        CorsConfiguration:
-          CorsRules:
-          - AllowedMethods:
-            - GET
-            - PUT
-            - POST
-            - HEAD
-            AllowedOrigins:
-            - "*"
-            AllowedHeaders:
-            - "*"
-        LifecycleConfiguration:
-          Rules:
-          - Id: ExpirationRule
-            Status: Enabled
-            ExpirationInDays: '90'
+    # S3BucketWisawimgtest:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: wisaw-img-test-custom
+    #     AccessControl: PublicRead
+    #     CorsConfiguration:
+    #       CorsRules:
+    #       - AllowedMethods:
+    #         - GET
+    #         - PUT
+    #         - POST
+    #         - HEAD
+    #         AllowedOrigins:
+    #         - "*"
+    #         AllowedHeaders:
+    #         - "*"
+    #     LifecycleConfiguration:
+    #       Rules:
+    #       - Id: ExpirationRule
+    #         Status: Enabled
+    #         ExpirationInDays: '1'
