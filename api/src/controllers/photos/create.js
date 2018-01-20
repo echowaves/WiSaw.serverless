@@ -80,6 +80,7 @@ export async function main(event, context, callback) {
     body: JSON.stringify({
       status: 'success',
       uploadURL,
+      photo,
     }),
   }
   callback(null, response)

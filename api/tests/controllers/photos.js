@@ -35,6 +35,7 @@ describe('/photos', () => {
     expect(response.status).to.equal(201)
     expect(response.body.status).to.equal('success')
     expect(response.body).to.have.property('uploadURL')
+    expect(response.body).to.have.property('photo')
 
     // var contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
     const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
@@ -63,7 +64,7 @@ describe('/photos', () => {
   })
 
 
-  it.only('should be able to query feed photos', async () => {
+  it('should be able to query feed photos', async () => {
     const location = { type: 'Point', coordinates: [38.80, -77.98] }
 
     const response =
@@ -93,7 +94,7 @@ describe('/photos', () => {
     const guid = uuid()
 
     const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-    const contents = [...fs.readFileSync('./api/tests/controllers/data/large.jpg')]
+    // const contents = [...fs.readFileSync('./api/tests/controllers/data/large.jpg')]
 
     const photoResponse =
     await request
@@ -101,22 +102,19 @@ describe('/photos', () => {
         .set('Content-Type', 'application/json')
         .send({ uuid: guid })
         .send({ location: point })
-        .send({ imageData: contents })
-
     const response =
     await request
-        .get(`/photos/${photoResponse.body.id}`)
+        .get(`/photos/${photoResponse.body.photo.id}`)
         .set('Content-Type', 'application/json')
-
     expect(response.body.photo).to.have.property('id')
     expect(response.body.photo).to.have.property('uuid')
     expect(response.body.photo).to.have.property('location')
-    expect(response.body.photo).to.have.property('thumbNail')
-    expect(response.body.photo).to.have.property('imageData')
+    expect(response.body.photo).to.have.property('img_url')
+    expect(response.body.photo).to.have.property('thumb_url')
     expect(response.body.photo).to.have.property('createdAt')
     expect(response.body.photo).to.not.have.property('distance')
 
-    expect(response.body.photo.id).to.eq(photoResponse.body.id)
+    expect(response.body.photo.id).to.eq(photoResponse.body.photo.id)
 
     expect(response.status).to.equal(200)
     expect(response.body.status).to.equal('success')
@@ -135,7 +133,7 @@ describe('/photos', () => {
   })
 
 
-  it('should be able to delete a photo by id', async () => {
+  it.only('should be able to delete a photo by id', async () => {
     const guid = uuid()
 
     const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }

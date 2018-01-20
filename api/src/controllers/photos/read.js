@@ -20,8 +20,10 @@ export async function main(event, context, callback) {
         body: JSON.stringify({ error: 'not found' }),
       }
       callback(null, response)
-      return
+      return false
     }
+    photo.dataValues.img_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}`
+    photo.dataValues.thumb_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}-thumb`
   } catch (err) {
     console.log('Unable to retrieve a Photo', err)
 
@@ -30,7 +32,7 @@ export async function main(event, context, callback) {
       body: JSON.stringify({ error: 'Unable to retrieve a Photo' }),
     }
     callback(null, response)
-    return
+    return false
   }
 
   // Resond to request indicating the photo was created
@@ -39,4 +41,5 @@ export async function main(event, context, callback) {
     body: JSON.stringify({ status: 'success', photo }),
   }
   callback(null, response)
+  return true
 }
