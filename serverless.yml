@@ -54,7 +54,6 @@ functions:
             parameters:
               application/json: '{"uuid":{"type":"string"}}'
 
-
   contactFormPost: # http endpoint
     handler: api/src/controllers/contactForms/create.main
     description: create contact form record
@@ -72,6 +71,7 @@ functions:
           path: photos/cleanup
           method: get
           private: false
+
   photosCleanupSchedule: # the same as above (reusing the same function), but is invoked by a scheduler
     handler: api/src/controllers/photos/cleanup.main
     description: cleaning up old photos periodically once an hour
@@ -100,6 +100,7 @@ functions:
           method: post
           private: false
           cors: true
+
   photosThumbsGenerate:
     handler: api/src/controllers/photos/createThumb.main
     description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
@@ -117,22 +118,7 @@ functions:
           path: photos/{id}
           method: get
           private: false
-  # photosThumbGet: # http endpoint
-  #   handler: api/src/controllers/photos/thumb.main
-  #   description: photos thumb image
-  #   events:
-  #     - http:
-  #         path: photos/{id}/thumb
-  #         method: get
-  #         private: false
-  # photosFullGet: # http endpoint
-  #   handler: api/src/controllers/photos/full.main
-  #   description: photos full image
-  #   events:
-  #     - http:
-  #         path: photos/{id}/full
-  #         method: get
-  #         private: false
+
   photosDelete: # http endpoint
     handler: api/src/controllers/photos/delete.main
     description: (CRU'D') - photo
@@ -168,6 +154,7 @@ resources:
           - Id: ExpirationRule
             Status: Enabled
             ExpirationInDays: '1'
+
     S3BucketWisawimgprod:
       Type: AWS::S3::Bucket
       Properties:
@@ -175,4 +162,4 @@ resources:
           Rules:
           - Id: ExpirationRule
             Status: Enabled
-            ExpirationInDays: '30'
+            ExpirationInDays: '45'
