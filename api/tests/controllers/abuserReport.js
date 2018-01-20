@@ -1,5 +1,4 @@
 import uuid from 'uuid'
-import fs from 'fs'
 
 import supertest from 'supertest'
 import chai from 'chai'
@@ -9,7 +8,7 @@ import { config } from '../../../.env.test'
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
 
-describe('/abusereport', () => {
+describe('abusereport', () => {
   it('should not be able to post an abuseReport with no parameters', async () => {
     const response =
     await request
@@ -38,11 +37,7 @@ describe('/abusereport', () => {
     const guid = uuid()
 
     const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-    const contents = [...fs.readFileSync('./api/tests/controllers/data/large.jpg')]
-
     // console.log("contents.size: ", contents.length)
-
-
     // post 4 abuse reports for a particular UUID
     await request
       .post('/abusereport')
@@ -67,7 +62,6 @@ describe('/abusereport', () => {
         .set('Content-Type', 'application/json')
         .send({ uuid: guid })
         .send({ location: point })
-        .send({ imageData: contents })
 
     expect(response.status).to.equal(401)
     expect(response.body.error).to.equal('Anauthorized.')
