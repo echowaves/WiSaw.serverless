@@ -19,7 +19,7 @@ export async function main(event, context, callback) {
       body: JSON.stringify({ error: 'parameters missing' }),
     }
     callback(null, response)
-    return
+    return false
   }
 
   console.log('location:', location)
@@ -42,17 +42,28 @@ export async function main(event, context, callback) {
   // retrieve photos
   let photos
   try {
-    photos = await Photo.findAll({
+    const dbPhotos = await Photo.findAll({
       attributes: {
-        include: [[Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance']],
-        exclude: ['imageData'],
+        include: [
+          [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
+          // [`https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}`, 'img_url'],
+          // [`https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${Sequelize.col('id')}-thumb`, 'thumb_url'],
+        ],
       },
       order: Sequelize.col('distance'),
       limit,
       offset,
     })
-
-    console.log('retrived photos:', photos.length)
+    console.log('retrived photos:', dbPhotos.length)
+    // add img_url and thumb_url properties
+    photos = dbPhotos.map((dbPhoto) => {
+      const photo = dbPhoto
+      photo.dataValues.img_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}`
+      photo.dataValues.thumb_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}-thumb`
+      // console.log({ photo })
+      return photo
+    })
+    // console.log({ photos })
   } catch (err) {
     console.log('Unable to retrieve Photos feed', err)
     const response = {
@@ -60,7 +71,7 @@ export async function main(event, context, callback) {
       body: JSON.stringify({ error: 'Unable to retrieve Photos feed' }),
     }
     callback(null, response)
-    return
+    return false
   }
 
 
@@ -70,4 +81,5 @@ export async function main(event, context, callback) {
     body: JSON.stringify({ status: 'success', photos }),
   }
   callback(null, response)
+  return true
 }

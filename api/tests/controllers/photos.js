@@ -21,7 +21,7 @@ describe('/photos', () => {
     expect(response.body.error).to.equal('parameters missing')
   })
 
-  it.only('should be able to post a photo with right parameters', async () => {
+  it('should be able to post a photo with right parameters', async () => {
     const guid = uuid()
     const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
@@ -63,7 +63,7 @@ describe('/photos', () => {
   })
 
 
-  it('should be able to query feed photos', async () => {
+  it.only('should be able to query feed photos', async () => {
     const location = { type: 'Point', coordinates: [38.80, -77.98] }
 
     const response =
@@ -71,15 +71,15 @@ describe('/photos', () => {
         .post('/photos/feed')
         .set('Content-Type', 'application/json')
         .send({ location })
-        // console.log("response.body", response.body)
+
     expect(response.body.photos.length).to.not.equal(0)
     expect(response.body.photos[0]).to.have.property('id')
     expect(response.body.photos[0]).to.have.property('uuid')
     expect(response.body.photos[0]).to.have.property('location')
-    expect(response.body.photos[0]).to.have.property('thumbNail')
-    expect(response.body.photos[0]).to.not.have.property('imageData')
     expect(response.body.photos[0]).to.have.property('createdAt')
     expect(response.body.photos[0]).to.have.property('distance')
+    expect(response.body.photos[0]).to.have.property('img_url')
+    expect(response.body.photos[0]).to.have.property('thumb_url')
 
     expect(response.status).to.equal(200)
     expect(response.body.status).to.equal('success')
