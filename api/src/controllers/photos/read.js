@@ -22,8 +22,6 @@ export async function main(event, context, callback) {
       callback(null, response)
       return false
     }
-    photo.dataValues.img_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}`
-    photo.dataValues.thumb_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}-thumb`
   } catch (err) {
     console.log('Unable to retrieve a Photo', err)
 

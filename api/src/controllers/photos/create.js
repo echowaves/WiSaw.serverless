@@ -38,7 +38,6 @@ export async function main(event, context, callback) {
     return false
   }
 
-
   console.log('uuid:', uuid)
   console.log('location:', location)
 

@@ -83,8 +83,8 @@ describe('photos', () => {
       expect(response.body.photos[0]).to.have.property('location')
       expect(response.body.photos[0]).to.have.property('createdAt')
       expect(response.body.photos[0]).to.have.property('distance')
-      expect(response.body.photos[0]).to.have.property('img_url')
-      expect(response.body.photos[0]).to.have.property('thumb_url')
+      expect(response.body.photos[0]).to.have.property('getImgUrl')
+      expect(response.body.photos[0]).to.have.property('getThumbUrl')
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -108,15 +108,17 @@ describe('photos', () => {
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
           .send({ location: point })
+
       const response =
       await request
           .get(`/photos/${photoResponse.body.photo.id}`)
           .set('Content-Type', 'application/json')
+
       expect(response.body.photo).to.have.property('id')
       expect(response.body.photo).to.have.property('uuid')
       expect(response.body.photo).to.have.property('location')
-      expect(response.body.photo).to.have.property('img_url')
-      expect(response.body.photo).to.have.property('thumb_url')
+      expect(response.body.photo).to.have.property('getImgUrl')
+      expect(response.body.photo).to.have.property('getThumbUrl')
       expect(response.body.photo).to.have.property('createdAt')
       expect(response.body.photo).to.not.have.property('distance')
 
