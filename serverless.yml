@@ -93,7 +93,6 @@ functions:
   photosPost: # http endpoint, which creates a record in DB, generaes unique photo id and then genertes upload URL to eb used for direct s3 upload
     handler: api/src/controllers/photos/create.main
     description: ('C'RUD) - photo
-    # memorySize: 300 # need to allocate more memory for Jimp image processing
     events:
       - http:
           path: photos
@@ -104,11 +103,19 @@ functions:
   photosThumbsGenerate:
     handler: api/src/controllers/photos/createThumb.main
     description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
-    memorySize: 300
+    memorySize: 300 # fails with the default options -- must give more memory
     events:
       - s3: # this will create the bucket
           bucket: ${self:custom.bucket_name}
           event: s3:ObjectCreated:*
+
+  photosRemoveS3Trigger:
+    handler: api/src/controllers/photos/removeTrigger.main
+    description: 'removes photo record from DB when it is removed from S3 bucket'
+    events:
+      - s3:
+          bucket: ${self:custom.bucket_name}
+          event: s3:ObjectRemoved:*
 
   photosGet: # http endpoint
     handler: api/src/controllers/photos/read.main

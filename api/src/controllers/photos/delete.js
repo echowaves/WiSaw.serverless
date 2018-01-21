@@ -8,7 +8,7 @@ export async function main(event, context, callback) {
 
   const { id } = event.pathParameters
 
-  // retrieve photos
+  // delete photos
   let photo
   try {
     photo = await Photo.destroy({
