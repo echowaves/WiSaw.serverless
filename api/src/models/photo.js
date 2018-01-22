@@ -27,6 +27,7 @@ const Photo = sequelize.define('Photo', {
   active: {
     allowNull: false,
     type: Sequelize.BOOLEAN,
+    defaultValue: false,
   },
 }, {
   getterMethods: {
