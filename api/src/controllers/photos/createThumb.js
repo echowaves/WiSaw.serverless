@@ -12,17 +12,20 @@ export async function main(event, context, cb) {
   }
 
   const record = event.Records[0];
-
+  const name = record.s3.object.key
   // we only want to deal with originals
-  if (record.s3.object.key.includes('-thumb')) {
-    console.warn('Not an original, skipping')
+  if (name.includes('-thumb')) {
+    console.log('thumbnail uploaded, activating image')
+
+    // activate image
+    await axios.put(`${process.env.HOST}/${name.replace('-thumb', '')}/activate`)
+
     cb('Not an original, skipping')
     return false
   }
 
   // get the prefix, and get the hash
 
-  const name = record.s3.object.key
   console.log('record.s3.bucket.name:', record.s3.bucket.name)
   console.log('record.s3.object.key:', record.s3.object.key)
   // download the original to disk
@@ -43,36 +46,53 @@ export async function main(event, context, cb) {
       const cmd = `convert ${widths[size]} ${sourcePath} ${tmpFileName}`
       console.log('Running: ', cmd)
 
-      exec(cmd, async (error, stdout, stderr) => { // eslint-disable-line no-unused-vars
+      exec(cmd, (error, stdout, stderr) => { // eslint-disable-line no-unused-vars
         if (error) {
           // the command failed (non-zero), fail
           console.warn(`exec error: ${error}, stdout, stderr`)
-          // continue
-        } else {
-          // resize was succesfull, upload the file
-          console.info(`Resize to ${size} OK`)
-          const fileBuffer = fs.readFileSync(tmpFileName)
-          console.log('thumb size:', fileBuffer.byteLength)
-
-          try {
-            await s3.putObject({
-              ACL: 'public-read',
-              Key: `${name}-thumb`,
-              Body: fileBuffer,
-              Bucket: record.s3.bucket.name,
-              ContentType: 'image/jpg',
-            })
-
-            // activate image
-            // await axios.put(`${process.env.HOST}/${name}/activate`)
-          } catch (err) {
-            console.log(`Unable to upload thumb ${name}`, err)
-          }
+          cb('failed converting')
+          return false
         }
+        // resize was succesfull, upload the file
+        console.info(`Resize to ${size} OK`)
+        const fileBuffer = fs.readFileSync(tmpFileName)
+        console.log('thumb size:', fileBuffer.byteLength)
+
+        try {
+          console.log('uploading image: ', `${name}-thumb`)
+          // await s3.putObject({
+          //   ACL: 'public-read',
+          //   Key: `${name}-thumb`,
+          //   Body: fileBuffer,
+          //   Bucket: record.s3.bucket.name,
+          //   ContentType: 'image/jpg',
+          // })
+
+          s3.putObject({
+            ACL: 'public-read',
+            Key: `${name}-thumb`,
+            Body: fileBuffer,
+            Bucket: record.s3.bucket.name,
+            ContentType: 'image/jpg',
+          }, (err, res) => {
+            if (err) {
+              console.log({ err })
+            }
+            // // activate image
+            // axios.put(`${process.env.HOST}/${name}/activate`)
+            console.log({ res })
+            console.log('done')
+          })
+          console.log('finished uploading')
+        } catch (err) {
+          console.log(`Unable to upload thumb ${name}`, err)
+        }
+        cb('success')
+        return true
       })
     })
   })
 
-  cb('success')
+  cb('success everything')
   return true
 }

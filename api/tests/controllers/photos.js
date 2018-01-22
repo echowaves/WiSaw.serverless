@@ -75,10 +75,12 @@ describe('photos', () => {
     })
 
 
-    it('should be able to query feed photos', async () => {
+    it.only('should be able to query feed photos', async () => {
       const location = { type: 'Point', coordinates: [38.80, -77.98] }
       const guid = uuid()
       const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      // const contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
+      const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
 
       const responseCreate =
       await request
@@ -86,9 +88,22 @@ describe('photos', () => {
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
           .send({ location: point })
-      await request
-        .put(`/photos/${responseCreate.body.photo.id}/activate`)
-        .set('Content-Type', 'application/json')
+          // should activated by thumnail creating after uploading is complete
+
+          // console.log('contents.size:', contents.length)
+          // console.log('uploadURL', response.body.uploadURL)
+
+      const options = {
+        headers: {
+          'Content-Type': 'image/jpg',
+        },
+      }
+
+      await axios.put(responseCreate.body.uploadURL, contents, options)
+
+      // await request
+      //   .put(`/photos/${responseCreate.body.photo.id}/activate`)
+      //   .set('Content-Type', 'application/json')
 
       const response =
       await request
