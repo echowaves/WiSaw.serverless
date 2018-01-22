@@ -30,6 +30,7 @@ provider:
     DATABASE_URL: ${file(.env.${opt:stage}.js):config.DATABASE_URL}
     HOST: ${file(.env.${opt:stage}.js):config.HOST}
     IMAGE_BUCKET: ${self:custom.bucket_name}
+    STAGE: ${opt:stage}
 
 
 functions:
@@ -153,6 +154,14 @@ functions:
           method: delete
           private: false
 
+  cleanupAllGet: # http endpoint
+    handler: api/src/controllers/photos/cleanupAll.main
+    description: cleaning up all data (only enabled in test)
+    events:
+      - http:
+          path: cleanup
+          method: get
+          private: false
 
 resources:
   Resources:

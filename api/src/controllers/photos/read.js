@@ -12,7 +12,10 @@ export async function main(event, context, callback) {
   let photo
   try {
     photo = await Photo.findOne({
-      where: { id },
+      where: {
+        id,
+        active: true,
+      },
     })
     if (!photo) {
       const response = {

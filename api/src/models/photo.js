@@ -43,12 +43,5 @@ const Photo = sequelize.define('Photo', {
 // Adding a class level method
 
 // Adding an instance level method
-// Photo.prototype.getImgUrl = function () { // eslint-disable-line func-names
-//   return `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${this.id}`
-// }
-//
-// Photo.getThumbUrl = function () { // eslint-disable-line func-names
-//   return `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${this.id}-thumb`
-// }
 
 export default Photo

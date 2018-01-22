@@ -43,6 +43,7 @@ export async function main(event, context, callback) {
   let photos
   try {
     photos = await Photo.findAll({
+      where: { active: true },
       attributes: {
         include: [
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],

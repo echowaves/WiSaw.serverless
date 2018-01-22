@@ -1,6 +1,6 @@
 import fs from 'fs'
 import AWS from 'aws-sdk'
-// import axios from 'axios'
+import axios from 'axios'
 
 import { exec } from 'child_process'
 
@@ -43,7 +43,7 @@ export async function main(event, context, cb) {
       const cmd = `convert ${widths[size]} ${sourcePath} ${tmpFileName}`
       console.log('Running: ', cmd)
 
-      exec(cmd, (error, stdout, stderr) => { // eslint-disable-line no-unused-vars
+      exec(cmd, async (error, stdout, stderr) => { // eslint-disable-line no-unused-vars
         if (error) {
           // the command failed (non-zero), fail
           console.warn(`exec error: ${error}, stdout, stderr`)
@@ -54,24 +54,25 @@ export async function main(event, context, cb) {
           const fileBuffer = fs.readFileSync(tmpFileName)
           console.log('thumb size:', fileBuffer.byteLength)
 
-          s3.putObject({
-            ACL: 'public-read',
-            Key: `${name}-thumb`,
-            Body: fileBuffer,
-            Bucket: record.s3.bucket.name,
-            ContentType: 'image/jpg',
-          }, (err, res) => {
-            if (err) {
-              console.log({ err })
-            }
-            console.log({ res })
-            console.log('done')
-          })
+          try {
+            await s3.putObject({
+              ACL: 'public-read',
+              Key: `${name}-thumb`,
+              Body: fileBuffer,
+              Bucket: record.s3.bucket.name,
+              ContentType: 'image/jpg',
+            })
+
+            // activate image
+            // await axios.put(`${process.env.HOST}/${name}/activate`)
+          } catch (err) {
+            console.log(`Unable to upload thumb ${name}`, err)
+          }
         }
       })
-      return true
     })
   })
+
   cb('success')
   return true
 }
