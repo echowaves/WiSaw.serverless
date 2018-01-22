@@ -24,6 +24,10 @@ const Photo = sequelize.define('Photo', {
     allowNull: false,
     type: Sequelize.DATE,
   },
+  active: {
+    allowNull: false,
+    type: Sequelize.BOOLEAN,
+  },
 }, {
   getterMethods: {
     getImgUrl() {
