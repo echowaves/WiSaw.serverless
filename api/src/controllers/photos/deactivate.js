@@ -14,7 +14,7 @@ export async function main(event, context, callback) {
   let photo
   try {
     photo = await Photo.update(
-      { active: true },
+      { active: false },
       { where: { id } },
     )
 
@@ -27,16 +27,16 @@ export async function main(event, context, callback) {
       return
     }
   } catch (err) {
-    console.log('Unable to activate a Photo', err)
+    console.log('Unable to deactivate a Photo', err)
     const response = {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Unable to activate a Photo' }),
+      body: JSON.stringify({ error: 'Unable to deactivate a Photo' }),
     }
     callback(null, response)
     return
   }
 
-  // the photo was activated
+  // the photo was deactivated
   const response = {
     statusCode: 200,
     body: JSON.stringify({ status: 'success' }),

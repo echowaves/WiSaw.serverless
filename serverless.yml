@@ -109,6 +109,14 @@ functions:
           method: put
           private: false
 
+  photosDeActivate: # http endpoint
+    handler: api/src/controllers/photos/deactivate.main
+    description: make existing photo inactive
+    events:
+      - http:
+          path: photos/{id}/deactivate
+          method: put
+          private: false
 
   photosThumbsGenerate:
     handler: api/src/controllers/photos/createThumb.main

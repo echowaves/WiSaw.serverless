@@ -212,4 +212,49 @@ describe('photos', () => {
       expect(response.body.error).to.equal('not found')
     })
   })
+
+
+  describe('deactivate', () => {
+    it('should be able to deactivate a photo by id', async () => {
+      const guid = uuid()
+
+      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photoResponse =
+      await request
+          .post('/photos')
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ location: point })
+
+      expect(photoResponse.body.photo.active).to.equal(false)
+
+      let response =
+      await request
+          .put(`/photos/${photoResponse.body.photo.id}/activate`)
+          .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      response =
+      await request
+          .put(`/photos/${photoResponse.body.photo.id}/deactivate`)
+          .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+    })
+
+
+    it('should not be able to deactivate non existing photo by id', async () => {
+      const response =
+      await request
+          .put('/photos/0/deactivate')
+          .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(404)
+      expect(response.body.error).to.equal('not found')
+    })
+  })
 })
