@@ -22,7 +22,7 @@ export async function main(event, context, cb) {
     // console.log({ activateUrl })
     await axios.put(activateUrl)
     cb('activating the image in DB')
-    return false
+    return true
   }
 
   // get the prefix, and get the hash
@@ -66,7 +66,7 @@ export async function main(event, context, cb) {
           //   Key: `${name}-thumb`,
           //   Body: fileBuffer,
           //   Bucket: record.s3.bucket.name,
-          //   ContentType: 'image/jpg',
+          //   ContentType: 'image/jpeg',
           // })
 
           s3.putObject({
@@ -74,7 +74,7 @@ export async function main(event, context, cb) {
             Key: `${name}-thumb`,
             Body: fileBuffer,
             Bucket: record.s3.bucket.name,
-            ContentType: 'image/jpg',
+            ContentType: 'image/jpeg',
           }, (err, res) => {
             if (err) {
               console.log({ err })
