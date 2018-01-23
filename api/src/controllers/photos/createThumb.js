@@ -18,9 +18,10 @@ export async function main(event, context, cb) {
     console.log('thumbnail uploaded, activating image')
 
     // activate image
-    await axios.put(`${process.env.HOST}/${name.replace('-thumb', '')}/activate`)
-
-    cb('Not an original, skipping')
+    const activateUrl = `${process.env.HOST}/photos/${name.replace('-thumb', '')}/activate`
+    // console.log({ activateUrl })
+    await axios.put(activateUrl)
+    cb('activating the image in DB')
     return false
   }
 

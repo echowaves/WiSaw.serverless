@@ -10,6 +10,10 @@ import { config } from '../../../.env.test'
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 describe('photos', () => {
   beforeEach(async () => {
     try {
@@ -75,7 +79,7 @@ describe('photos', () => {
     })
 
 
-    it.only('should be able to query feed photos', async () => {
+    it('should be able to query feed photos', async () => {
       const location = { type: 'Point', coordinates: [38.80, -77.98] }
       const guid = uuid()
       const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
@@ -88,22 +92,18 @@ describe('photos', () => {
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
           .send({ location: point })
-          // should activated by thumnail creating after uploading is complete
-
-          // console.log('contents.size:', contents.length)
-          // console.log('uploadURL', response.body.uploadURL)
 
       const options = {
         headers: {
           'Content-Type': 'image/jpg',
         },
       }
-
+      // upload the image
       await axios.put(responseCreate.body.uploadURL, contents, options)
 
-      // await request
-      //   .put(`/photos/${responseCreate.body.photo.id}/activate`)
-      //   .set('Content-Type', 'application/json')
+      // should activated by thumnail creating after uploading is complete,
+      // but let's wait for it to happen
+      await sleep(3000) // takes about 3 seconds for the image to activate after it's uploaded
 
       const response =
       await request
@@ -119,6 +119,7 @@ describe('photos', () => {
       expect(response.body.photos[0]).to.have.property('distance')
       expect(response.body.photos[0]).to.have.property('getImgUrl')
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
+      expect(response.body.photos[0].active).to.eq(true)
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -131,18 +132,36 @@ describe('photos', () => {
       const guid = uuid()
 
       const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      // const contents = [...fs.readFileSync('./api/tests/controllers/data/large.jpg')]
+      const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
 
-      const photoResponse =
+      const responseCreate =
       await request
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
           .send({ location: point })
 
-      const response =
+      let response =
       await request
-          .get(`/photos/${photoResponse.body.photo.id}`)
+          .get(`/photos/${responseCreate.body.photo.id}`)
+          .set('Content-Type', 'application/json')
+      expect(response.status).to.equal(404)
+
+      const options = {
+        headers: {
+          'Content-Type': 'image/jpg',
+        },
+      }
+      // upload the image
+      await axios.put(responseCreate.body.uploadURL, contents, options)
+
+      // should activated by thumnail creating after uploading is complete,
+      // but let's wait for it to happen
+      await sleep(3000) // takes about 3 seconds for the image to activate after it's uploaded
+
+      response =
+      await request
+          .get(`/photos/${responseCreate.body.photo.id}`)
           .set('Content-Type', 'application/json')
 
       expect(response.body.photo).to.have.property('id')
@@ -152,8 +171,9 @@ describe('photos', () => {
       expect(response.body.photo).to.have.property('getThumbUrl')
       expect(response.body.photo).to.have.property('createdAt')
       expect(response.body.photo).to.not.have.property('distance')
+      expect(response.body.photo.active).to.eq(true)
 
-      expect(response.body.photo.id).to.eq(photoResponse.body.photo.id)
+      expect(response.body.photo.id).to.eq(responseCreate.body.photo.id)
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
