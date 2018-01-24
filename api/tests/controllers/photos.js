@@ -57,7 +57,7 @@ describe('photos', () => {
 
       const options = {
         headers: {
-          'Content-Type': 'image/jpg',
+          'Content-Type': 'image/jpeg',
         },
       }
 
@@ -95,7 +95,7 @@ describe('photos', () => {
 
       const options = {
         headers: {
-          'Content-Type': 'image/jpg',
+          'Content-Type': 'image/jpeg',
         },
       }
       // upload the image
@@ -149,7 +149,7 @@ describe('photos', () => {
 
       const options = {
         headers: {
-          'Content-Type': 'image/jpg',
+          'Content-Type': 'image/jpeg',
         },
       }
       // upload the image
