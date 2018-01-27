@@ -196,4 +196,4 @@ resources:
           Rules:
           - Id: ExpirationRule
             Status: Enabled
-            ExpirationInDays: '45'
+            ExpirationInDays: '145'
