@@ -44,7 +44,7 @@ export async function main(event, context, cb) {
     // resize to every configured size
     Object.keys(widths).forEach((size) => {
       const tmpFileName = `/tmp/${name}-thumb-${size}`
-      const cmd = `convert ${widths[size]} ${sourcePath} ${tmpFileName}`
+      const cmd = `convert -auto-orient ${widths[size]} ${sourcePath} ${tmpFileName}`
       console.log('Running: ', cmd)
 
       exec(cmd, (error, stdout, stderr) => { // eslint-disable-line no-unused-vars
