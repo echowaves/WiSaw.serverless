@@ -21,7 +21,7 @@ export async function main(event, context, cb) {
     const activateUrl = `${process.env.HOST}/photos/${name.replace('-thumb', '')}/activate`
     // console.log({ activateUrl })
     await axios.put(activateUrl)
-    cb('activating the image in DB')
+    cb(null, 'activating the image in DB')
     return true
   }
 
@@ -88,12 +88,12 @@ export async function main(event, context, cb) {
         } catch (err) {
           console.log(`Unable to upload thumb ${name}`, err)
         }
-        cb('success')
+        cb(null, 'success')
         return true
       })
     })
   })
 
-  cb('success everything')
+  cb(null, 'success everything')
   return true
 }

@@ -7,8 +7,8 @@ export async function main(event, context, cb) {
   // we only want to deal with originals
   if (record.s3.object.key.includes('-thumb')) {
     console.warn('Not an original, skipping')
-    cb('Not an original, skipping')
-    return false
+    cb(null, 'Not an original, skipping')
+    return true
   }
 
   const id = record.s3.object.key
@@ -31,6 +31,6 @@ export async function main(event, context, cb) {
   }
 
   // the photo was deteled
-  cb('success')
+  cb(null, 'success')
   return true
 }
