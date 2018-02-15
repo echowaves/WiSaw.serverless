@@ -9,12 +9,15 @@ export async function main(event, context, callback) {
   const { id } = event.pathParameters
 
   // delete photos
+  // update photos
   let photo
   try {
-    photo = await Photo.destroy({
-      where: { id },
-    })
-    if (!photo) {
+    photo = await Photo.update(
+      { active: false },
+      { where: { id } },
+    )
+
+    if (photo[0] === 0) {
       const response = {
         statusCode: 404,
         body: JSON.stringify({ error: 'not found' }),
@@ -22,6 +25,17 @@ export async function main(event, context, callback) {
       callback(null, response)
       return
     }
+    // photo = await Photo.destroy({
+    //   where: { id },
+    // })
+    // if (!photo) {
+    //   const response = {
+    //     statusCode: 404,
+    //     body: JSON.stringify({ error: 'not found' }),
+    //   }
+    //   callback(null, response)
+    //   return
+    // }
   } catch (err) {
     console.log('Unable to delete a Photo', err)
     const response = {
