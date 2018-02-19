@@ -123,6 +123,15 @@ functions:
           method: put
           private: false
 
+  photosLike: # http endpoint
+    handler: api/src/controllers/photos/like.main
+    description: like existing photo
+    events:
+      - http:
+          path: photos/{id}/like
+          method: put
+          private: false
+
   photosThumbsGenerate:
     handler: api/src/controllers/photos/createThumb.main
     description: 'generates *.thumb image when ever a new image is uploaded to a bucket'

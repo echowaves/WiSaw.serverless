@@ -35,14 +35,14 @@ describe('photos', () => {
 
     it('should be able to post a photo with right parameters', async () => {
       const guid = uuid()
-      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
       const response =
       await request
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
-          .send({ location: point })
+          .send({ location })
 
       expect(response.status).to.equal(201)
       expect(response.body.status).to.equal('success')
@@ -82,8 +82,6 @@ describe('photos', () => {
     it('should be able to query feed photos', async () => {
       const location = { type: 'Point', coordinates: [38.80, -77.98] }
       const guid = uuid()
-      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      // const contents = [...fs.readFileSync('./api/tests/controllers/data/FooBuz.png')]
       const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
 
       const responseCreate =
@@ -91,7 +89,7 @@ describe('photos', () => {
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
-          .send({ location: point })
+          .send({ location })
 
       const options = {
         headers: {
@@ -120,6 +118,7 @@ describe('photos', () => {
       expect(response.body.photos[0]).to.have.property('getImgUrl')
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
+      expect(response.body.photos[0].likes).to.eq(0)
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -131,7 +130,7 @@ describe('photos', () => {
     it('should be able to get one photo by id', async () => {
       const guid = uuid()
 
-      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
       const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
 
       const responseCreate =
@@ -139,7 +138,7 @@ describe('photos', () => {
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
-          .send({ location: point })
+          .send({ location })
 
       let response =
       await request
@@ -197,14 +196,14 @@ describe('photos', () => {
     it('should be able to delete a photo by id', async () => {
       const guid = uuid()
 
-      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
       const photoResponse =
       await request
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
-          .send({ location: point })
+          .send({ location })
 
       const response =
       await request
@@ -232,14 +231,14 @@ describe('photos', () => {
     it('should be able to activate a photo by id', async () => {
       const guid = uuid()
 
-      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
       const photoResponse =
       await request
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
-          .send({ location: point })
+          .send({ location })
 
       expect(photoResponse.body.photo.active).to.equal(false)
 
@@ -269,14 +268,14 @@ describe('photos', () => {
     it('should be able to deactivate a photo by id', async () => {
       const guid = uuid()
 
-      const point = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
       const photoResponse =
       await request
           .post('/photos')
           .set('Content-Type', 'application/json')
           .send({ uuid: guid })
-          .send({ location: point })
+          .send({ location })
 
       expect(photoResponse.body.photo.active).to.equal(false)
 
@@ -302,6 +301,67 @@ describe('photos', () => {
       const response =
       await request
           .put('/photos/0/deactivate')
+          .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(404)
+      expect(response.body.error).to.equal('not found')
+    })
+  })
+
+
+  describe('like', () => {
+    it('should be able to like a photo by id', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photoResponse =
+      await request
+          .post('/photos')
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ location })
+      expect(photoResponse.body.photo.likes).to.equal(0)
+
+      // have to activate photo before liking it
+      await request
+        .put(`/photos/${photoResponse.body.photo.id}/activate`)
+        .set('Content-Type', 'application/json')
+
+      const response =
+      await request
+          .put(`/photos/${photoResponse.body.photo.id}/like`)
+          .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      const feedResponse =
+      await request
+          .post('/photos/feed')
+          .set('Content-Type', 'application/json')
+          .send({ location })
+
+      expect(feedResponse.body.photos.length).to.equal(1)
+      expect(feedResponse.body.photos[0]).to.have.property('id')
+      expect(feedResponse.body.photos[0]).to.have.property('uuid')
+      expect(feedResponse.body.photos[0]).to.have.property('location')
+      expect(feedResponse.body.photos[0]).to.have.property('createdAt')
+      expect(feedResponse.body.photos[0]).to.have.property('distance')
+      expect(feedResponse.body.photos[0]).to.have.property('getImgUrl')
+      expect(feedResponse.body.photos[0]).to.have.property('getThumbUrl')
+      expect(feedResponse.body.photos[0].active).to.eq(true)
+      expect(feedResponse.body.photos[0].likes).to.eq(1)
+
+      expect(feedResponse.status).to.equal(200)
+      expect(feedResponse.body.status).to.equal('success')
+    })
+
+
+    it('should not be able to like non existing photo by id', async () => {
+      const response =
+      await request
+          .put('/photos/0/activate')
           .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
