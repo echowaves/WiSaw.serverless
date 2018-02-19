@@ -8,6 +8,10 @@ const AbuseReport = sequelize.define('AbuseReport', {
     primaryKey: true,
     type: Sequelize.INTEGER,
   },
+  photo_id: {
+    allowNull: false,
+    type: Sequelize.INTEGER,
+  },
   uuid: {
     type: Sequelize.UUID,
     allowNull: false,

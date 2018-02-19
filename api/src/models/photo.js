@@ -16,6 +16,10 @@ const Photo = sequelize.define('Photo', {
     type: Sequelize.GEOMETRY('POINT'),
     allowNull: false,
   },
+  likes: {
+    allowNull: false,
+    type: Sequelize.INTEGER,
+  },
   createdAt: {
     allowNull: false,
     type: Sequelize.DATE,
