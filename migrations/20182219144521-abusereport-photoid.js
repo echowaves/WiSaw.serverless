@@ -2,7 +2,7 @@ module.exports = {
   up: (queryInterface, Sequelize) =>
     queryInterface.addColumn(
       'AbuseReports',
-      'photo_id',
+      'photoId',
       {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -11,5 +11,5 @@ module.exports = {
     ),
 
   down: (queryInterface, Sequelize) => // eslint-disable-line no-unused-vars
-    queryInterface.removeColumn('AbuseReports', 'photo_id'),
+    queryInterface.removeColumn('AbuseReports', 'photoId'),
 }

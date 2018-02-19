@@ -12,6 +12,11 @@ export async function main(event, context, callback) {
   // console.log({data})
   const uuid = data ? data.uuid : null
 
+  let photoId = data ? data.photoId : null
+  if (!photoId) {
+    photoId = 0
+  }
+
   if (!data || !uuid) {
     console.log('setting status to 400')
     const response = {
@@ -26,7 +31,9 @@ export async function main(event, context, callback) {
 
   // create and safe record
   try {
-    await AbuseReport.create({ uuid, createdAt, updatedAt })
+    await AbuseReport.create({
+      uuid, photoId, createdAt, updatedAt,
+    })
   } catch (err) {
     console.log('unable to create AbuseReport', err)
     const response = {

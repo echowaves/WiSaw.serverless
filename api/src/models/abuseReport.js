@@ -8,7 +8,7 @@ const AbuseReport = sequelize.define('AbuseReport', {
     primaryKey: true,
     type: Sequelize.INTEGER,
   },
-  photo_id: {
+  photoId: {
     allowNull: false,
     type: Sequelize.INTEGER,
   },
