@@ -16,6 +16,7 @@ export async function main(event, context, callback) {
 
   const uuid = data ? data.uuid : null
   const location = data ? data.location : null
+  const likes = 0 // have to privude default value since this column does not allow nulls
 
   if (!data || !uuid || !location) {
     console.log('setting status to 400')
@@ -50,6 +51,7 @@ export async function main(event, context, callback) {
     photo = await Photo.create({
       uuid,
       location,
+      likes,
       createdAt,
       updatedAt,
     })
