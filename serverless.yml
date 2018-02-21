@@ -20,7 +20,7 @@ provider:
   name: aws
   runtime: nodejs6.10
   region: us-east-1
-  memorySize: 128
+  memorySize: 3008
   timeout: 30
   versionFunctions: false # optional, default is true
   iamRoleStatements:
@@ -88,7 +88,6 @@ functions:
   photosFeedPost: # http endpoint
     handler: api/src/controllers/photos/feed.main
     description: photos feed
-    # memorySize: 1000 # need to allocate more memory
     events:
       - http:
           path: photos/feed
@@ -135,7 +134,7 @@ functions:
   photosThumbsGenerate:
     handler: api/src/controllers/photos/createThumb.main
     description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
-    memorySize: 300 # fails with the default options -- must give more memory
+    # memorySize: 300 # fails with the default options -- must give more memory
     events:
       - s3: # this will create the bucket
           bucket: ${self:custom.bucket_name}
