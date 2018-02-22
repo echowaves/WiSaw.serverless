@@ -16,7 +16,7 @@ export async function main(event, context, callback) {
     await sequelize.query('DELETE FROM "AbuseReports" where "createdAt" < NOW() - INTERVAL \'7 days\'')
     rowids = await sequelize.query('select id from (select id from "Photos" where "active" = true order by id desc limit 75) as r order by id limit 1')
     if (rowids[0].length > 0) {
-      results = await sequelize.query(`update "Photos" set "active" = false where "createdAt" < NOW() - INTERVAL '24 hours' and id < ${rowids[0][0].id} and "active" = true`)
+      results = await sequelize.query(`update "Photos" set "active" = false where "updatedAt" < NOW() - INTERVAL '24 hours' and id < ${rowids[0][0].id} and "active" = true`)
     }
     count = await sequelize.query('select count(*) FROM "Photos"')
   } catch (err) {
