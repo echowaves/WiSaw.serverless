@@ -128,7 +128,7 @@ functions:
     events:
       - http:
           path: photos/{id}/like
-          method: post
+          method: put
           private: false
 
   photosThumbsGenerate:

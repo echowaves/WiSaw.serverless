@@ -330,7 +330,7 @@ describe('photos', () => {
 
       const response =
       await request
-          .post(`/photos/${photoResponse.body.photo.id}/like`)
+          .put(`/photos/${photoResponse.body.photo.id}/like`)
           .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(200)
@@ -361,7 +361,7 @@ describe('photos', () => {
     it('should not be able to like non existing photo by id', async () => {
       const response =
       await request
-          .post('/photos/0/like')
+          .put('/photos/0/like')
           .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
