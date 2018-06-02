@@ -3,13 +3,16 @@ service: wisaw
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
   - serverless-webpack
-# Enable auto-packing of external modules
+  - serverless-offline
 custom:
   enabled:
     prod: true
     test: false
 
-  webpackIncludeModules: true
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
   bucket_name: wisaw-img-${opt:stage} #this is the only place where the bucket name is defined -- change it here if ever have to
 
   stageVariables:
