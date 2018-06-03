@@ -16,6 +16,30 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function createTestPhoto(location, date) {
+  const guid = uuid()
+  const createdAt = date
+  const updatedAt = date
+  const active = true
+  const likes = 3
+  // create and safe record
+  let photo
+  try {
+    photo = Photo.create({
+      uuid: guid,
+      location,
+      createdAt,
+      updatedAt,
+      active,
+      likes,
+    })
+  } catch (err) {
+    console.log('unable to create Photo', err)
+    return photo
+  }
+  return photo
+}
+
 describe('photos', () => {
   beforeEach(async () => {
     try {
@@ -142,34 +166,19 @@ describe('photos', () => {
 
 
     it('should be able to query feed photos by specific date', async () => {
-      const location = { type: 'Point', coordinates: [38.80, -77.98] }
-      const guid = uuid()
-      const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const today = moment()
+      const yesterday = moment().subtract(1, 'days')
 
-      const responseCreate =
-      await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
-
-      const options = {
-        headers: {
-          'Content-Type': 'image/jpeg',
-        },
-      }
-      // upload the image
-      await axios.put(responseCreate.body.uploadURL, contents, options)
-
-      // should activated by thumnail creating after uploading is complete,
-      // but let's wait for it to happen
-      await sleep(3000) // takes about 3 seconds for the image to activate after it's uploaded
+      createTestPhoto(location, today)
+      createTestPhoto(location, yesterday)
 
       const response =
       await request
-          .post('/photos/feed')
+          .post('/photos/feedByDate')
           .set('Content-Type', 'application/json')
           .send({ location })
+          .send({ day: today })
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('id')
@@ -431,28 +440,3 @@ describe('photos', () => {
     })
   })
 })
-
-// function createTestPhoto(date) {
-//   const guid = uuid()
-//   const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-//   const createdAt = date
-//   const updatedAt = date
-//   const active = true
-//   const likes = 3
-//   // create and safe record
-//   let photo
-//   try {
-//     photo = Photo.create({
-//       uuid: guid,
-//       location,
-//       createdAt,
-//       updatedAt,
-//       active,
-//       likes,
-//     })
-//   } catch (err) {
-//     console.log('unable to create Photo', err)
-//     return photo
-//   }
-//   return photo
-// }
