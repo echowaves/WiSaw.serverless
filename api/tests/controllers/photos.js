@@ -1,11 +1,13 @@
 import uuid from 'uuid'
 import fs from 'fs'
+import moment from 'moment'
 
 import supertest from 'supertest'
 import chai from 'chai'
 import axios from 'axios'
-
 import { config } from '../../../.env.test'
+
+import Photo from '../../src/models/photo'
 
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
@@ -66,7 +68,7 @@ describe('photos', () => {
   })
 
 
-  describe('feed', () => {
+  describe('feed.main', () => {
     it('should not be able to get a photo feed with no parameters', async () => {
       const response =
       await request
@@ -80,6 +82,66 @@ describe('photos', () => {
 
 
     it('should be able to query feed photos', async () => {
+      const location = { type: 'Point', coordinates: [38.80, -77.98] }
+      const guid = uuid()
+      const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
+
+      const responseCreate =
+      await request
+          .post('/photos')
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ location })
+
+      const options = {
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      }
+      // upload the image
+      await axios.put(responseCreate.body.uploadURL, contents, options)
+
+      // should activated by thumnail creating after uploading is complete,
+      // but let's wait for it to happen
+      await sleep(3000) // takes about 3 seconds for the image to activate after it's uploaded
+
+      const response =
+      await request
+          .post('/photos/feed')
+          .set('Content-Type', 'application/json')
+          .send({ location })
+
+      expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0]).to.have.property('id')
+      expect(response.body.photos[0]).to.have.property('uuid')
+      expect(response.body.photos[0]).to.have.property('location')
+      expect(response.body.photos[0]).to.have.property('createdAt')
+      expect(response.body.photos[0]).to.have.property('distance')
+      expect(response.body.photos[0]).to.have.property('getImgUrl')
+      expect(response.body.photos[0]).to.have.property('getThumbUrl')
+      expect(response.body.photos[0].active).to.eq(true)
+      expect(response.body.photos[0].likes).to.eq(0)
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+    })
+  })
+
+
+  describe('feed.byDate', () => {
+    it('should not be able to get a photo feed by date with no parameters', async () => {
+      const response =
+      await request
+          .post('/photos/feedByDate')
+          .set('Content-Type', 'application/json')
+
+
+      expect(response.status).to.equal(400)
+      expect(response.body.error).to.equal('parameters missing')
+    })
+
+
+    it('should be able to query feed photos by specific date', async () => {
       const location = { type: 'Point', coordinates: [38.80, -77.98] }
       const guid = uuid()
       const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
@@ -369,3 +431,28 @@ describe('photos', () => {
     })
   })
 })
+
+// function createTestPhoto(date) {
+//   const guid = uuid()
+//   const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+//   const createdAt = date
+//   const updatedAt = date
+//   const active = true
+//   const likes = 3
+//   // create and safe record
+//   let photo
+//   try {
+//     photo = Photo.create({
+//       uuid: guid,
+//       location,
+//       createdAt,
+//       updatedAt,
+//       active,
+//       likes,
+//     })
+//   } catch (err) {
+//     console.log('unable to create Photo', err)
+//     return photo
+//   }
+//   return photo
+// }
