@@ -3,6 +3,8 @@ import Sequelize from 'sequelize'
 
 import Photo from '../../models/photo'
 
+const { Op } = Sequelize
+
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {
   // Instruct the lambda to exit immediately
@@ -131,8 +133,8 @@ export async function byDate(event, context, callback) {
     photos = await Photo.findAll({
       where: {
         createdAt: {
-          $le: moment(day).toDate(),
-          $ge: moment(day).subtract(2, 'days').toDate(),
+          [Op.lte]: moment(day).toDate(),
+          [Op.gte]: moment(day).subtract(1, 'days').toDate(),
         },
       },
       attributes: {
