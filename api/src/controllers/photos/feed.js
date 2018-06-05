@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Sequelize from 'sequelize'
 
 import Photo from '../../models/photo'
@@ -94,8 +95,8 @@ export async function byDate(event, context, callback) {
   console.log({ data })
 
   const location = data ? data.location : null
-  const date = data ? data.date : null
-  if (!data || !location || !date) {
+  const day = data ? data.day : null
+  if (!data || !location || !day) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -106,7 +107,7 @@ export async function byDate(event, context, callback) {
   }
 
   console.log('location:', location)
-  console.log('date:', date)
+  console.log('day:', day)
 
   let limit = data ? data.limit : null
   let offset = data ? data.offset : null
@@ -122,15 +123,16 @@ export async function byDate(event, context, callback) {
 
   const point = Sequelize.fn('ST_MakePoint', lat, lng)
 
-
+  console.log('today: ', moment(day).toDate())
+  console.log('yesterday: ', moment(day).subtract(1, 'days').toDate())
   // retrieve photos
   let photos
   try {
     photos = await Photo.findAll({
       where: {
         createdAt: {
-          $lt: new Date(date),
-          $gt: new Date(new Date(date) - (24 * 60 * 60 * 1000)),
+          $le: moment(day).toDate(),
+          $ge: moment(day).subtract(2, 'days').toDate(),
         },
       },
       attributes: {

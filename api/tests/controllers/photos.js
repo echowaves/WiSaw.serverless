@@ -159,19 +159,20 @@ describe('photos', () => {
           .post('/photos/feedByDate')
           .set('Content-Type', 'application/json')
 
-
       expect(response.status).to.equal(400)
       expect(response.body.error).to.equal('parameters missing')
     })
 
 
-    it('should be able to query feed photos by specific date', async () => {
+    it.only('should be able to query feed photos by specific date', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
       const today = moment()
       const yesterday = moment().subtract(1, 'days')
+      const tomorrow = moment().add(1, 'days')
 
       createTestPhoto(location, today)
       createTestPhoto(location, yesterday)
+      createTestPhoto(location, tomorrow)
 
       const response =
       await request
@@ -179,6 +180,9 @@ describe('photos', () => {
           .set('Content-Type', 'application/json')
           .send({ location })
           .send({ day: today })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('id')
@@ -189,10 +193,7 @@ describe('photos', () => {
       expect(response.body.photos[0]).to.have.property('getImgUrl')
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
-      expect(response.body.photos[0].likes).to.eq(0)
-
-      expect(response.status).to.equal(200)
-      expect(response.body.status).to.equal('success')
+      expect(response.body.photos[0].likes).to.eq(3)
     })
   })
 
