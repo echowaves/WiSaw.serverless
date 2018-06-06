@@ -52,8 +52,8 @@ describe('photos', () => {
     it('should not be able to post a photo with no parameters', async () => {
       const response =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
+        .post('/photos')
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(400)
       expect(response.body.error).to.equal('parameters missing')
@@ -65,10 +65,10 @@ describe('photos', () => {
 
       const response =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
 
       expect(response.status).to.equal(201)
       expect(response.body.status).to.equal('success')
@@ -96,8 +96,8 @@ describe('photos', () => {
     it('should not be able to get a photo feed with no parameters', async () => {
       const response =
       await request
-          .post('/photos/feed')
-          .set('Content-Type', 'application/json')
+        .post('/photos/feed')
+        .set('Content-Type', 'application/json')
 
 
       expect(response.status).to.equal(400)
@@ -112,10 +112,10 @@ describe('photos', () => {
 
       const responseCreate =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
 
       const options = {
         headers: {
@@ -131,9 +131,9 @@ describe('photos', () => {
 
       const response =
       await request
-          .post('/photos/feed')
-          .set('Content-Type', 'application/json')
-          .send({ location })
+        .post('/photos/feed')
+        .set('Content-Type', 'application/json')
+        .send({ location })
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('id')
@@ -156,8 +156,8 @@ describe('photos', () => {
     it('should not be able to get a photo feed by date with no parameters', async () => {
       const response =
       await request
-          .post('/photos/feedByDate')
-          .set('Content-Type', 'application/json')
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(400)
       expect(response.body.error).to.equal('parameters missing')
@@ -173,10 +173,10 @@ describe('photos', () => {
 
       const response =
       await request
-          .post('/photos/feedByDate')
-          .set('Content-Type', 'application/json')
-          .send({ location })
-          .send({ daysAgo: 1 })
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+        .send({ daysAgo: 1 })
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -204,15 +204,15 @@ describe('photos', () => {
 
       const responseCreate =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
 
       let response =
       await request
-          .get(`/photos/${responseCreate.body.photo.id}`)
-          .set('Content-Type', 'application/json')
+        .get(`/photos/${responseCreate.body.photo.id}`)
+        .set('Content-Type', 'application/json')
       expect(response.status).to.equal(404)
 
       const options = {
@@ -229,8 +229,8 @@ describe('photos', () => {
 
       response =
       await request
-          .get(`/photos/${responseCreate.body.photo.id}`)
-          .set('Content-Type', 'application/json')
+        .get(`/photos/${responseCreate.body.photo.id}`)
+        .set('Content-Type', 'application/json')
 
       expect(response.body.photo).to.have.property('id')
       expect(response.body.photo).to.have.property('uuid')
@@ -251,8 +251,8 @@ describe('photos', () => {
     it('should not be able to get non existing photo by id', async () => {
       const response =
       await request
-          .get('/photos/0')
-          .set('Content-Type', 'application/json')
+        .get('/photos/0')
+        .set('Content-Type', 'application/json')
 
 
       expect(response.status).to.equal(404)
@@ -269,15 +269,15 @@ describe('photos', () => {
 
       const photoResponse =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
 
       const response =
       await request
-          .delete(`/photos/${photoResponse.body.photo.id}`)
-          .set('Content-Type', 'application/json')
+        .delete(`/photos/${photoResponse.body.photo.id}`)
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -287,8 +287,8 @@ describe('photos', () => {
     it('should not be able to delete non existing photo by id', async () => {
       const response =
       await request
-          .delete('/photos/0')
-          .set('Content-Type', 'application/json')
+        .delete('/photos/0')
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
       expect(response.body.error).to.equal('not found')
@@ -304,17 +304,17 @@ describe('photos', () => {
 
       const photoResponse =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
 
       expect(photoResponse.body.photo.active).to.equal(false)
 
       const response =
       await request
-          .put(`/photos/${photoResponse.body.photo.id}/activate`)
-          .set('Content-Type', 'application/json')
+        .put(`/photos/${photoResponse.body.photo.id}/activate`)
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -324,8 +324,8 @@ describe('photos', () => {
     it('should not be able to activate non existing photo by id', async () => {
       const response =
       await request
-          .put('/photos/0/activate')
-          .set('Content-Type', 'application/json')
+        .put('/photos/0/activate')
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
       expect(response.body.error).to.equal('not found')
@@ -341,25 +341,25 @@ describe('photos', () => {
 
       const photoResponse =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
 
       expect(photoResponse.body.photo.active).to.equal(false)
 
       let response =
       await request
-          .put(`/photos/${photoResponse.body.photo.id}/activate`)
-          .set('Content-Type', 'application/json')
+        .put(`/photos/${photoResponse.body.photo.id}/activate`)
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
 
       response =
       await request
-          .put(`/photos/${photoResponse.body.photo.id}/deactivate`)
-          .set('Content-Type', 'application/json')
+        .put(`/photos/${photoResponse.body.photo.id}/deactivate`)
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -369,8 +369,8 @@ describe('photos', () => {
     it('should not be able to deactivate non existing photo by id', async () => {
       const response =
       await request
-          .put('/photos/0/deactivate')
-          .set('Content-Type', 'application/json')
+        .put('/photos/0/deactivate')
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
       expect(response.body.error).to.equal('not found')
@@ -386,10 +386,10 @@ describe('photos', () => {
 
       const photoResponse =
       await request
-          .post('/photos')
-          .set('Content-Type', 'application/json')
-          .send({ uuid: guid })
-          .send({ location })
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
       expect(photoResponse.body.photo.likes).to.equal(0)
 
       // have to activate photo before liking it
@@ -399,17 +399,17 @@ describe('photos', () => {
 
       const response =
       await request
-          .put(`/photos/${photoResponse.body.photo.id}/like`)
-          .set('Content-Type', 'application/json')
+        .put(`/photos/${photoResponse.body.photo.id}/like`)
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
 
       const feedResponse =
       await request
-          .post('/photos/feed')
-          .set('Content-Type', 'application/json')
-          .send({ location })
+        .post('/photos/feed')
+        .set('Content-Type', 'application/json')
+        .send({ location })
 
       expect(feedResponse.body.photos.length).to.equal(1)
       expect(feedResponse.body.photos[0]).to.have.property('id')
@@ -430,8 +430,8 @@ describe('photos', () => {
     it('should not be able to like non existing photo by id', async () => {
       const response =
       await request
-          .put('/photos/0/like')
-          .set('Content-Type', 'application/json')
+        .put('/photos/0/like')
+        .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
       expect(response.body.error).to.equal('not found')

@@ -1,4 +1,3 @@
-import moment from 'moment'
 import Sequelize from 'sequelize'
 
 import Photo from '../../models/photo'
