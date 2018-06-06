@@ -16,10 +16,10 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function createTestPhoto(location, date) {
+function createTestPhoto(location, daysAgo) {
   const guid = uuid()
-  const createdAt = date
-  const updatedAt = date
+  const createdAt = moment().subtract(daysAgo, 'days').add(3, 'minutes')
+  const updatedAt = createdAt
   const active = true
   const likes = 3
   // create and safe record
@@ -166,20 +166,17 @@ describe('photos', () => {
 
     it.only('should be able to query feed photos by specific date', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      const today = moment()
-      const yesterday = moment().subtract(1, 'days')
-      const tomorrow = moment().add(1, 'days')
 
-      createTestPhoto(location, today)
-      createTestPhoto(location, yesterday)
-      createTestPhoto(location, tomorrow)
+      createTestPhoto(location, 0)
+      createTestPhoto(location, 1)
+      createTestPhoto(location, 2)
 
       const response =
       await request
           .post('/photos/feedByDate')
           .set('Content-Type', 'application/json')
           .send({ location })
-          .send({ day: today })
+          .send({ daysAgo: 1 })
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')

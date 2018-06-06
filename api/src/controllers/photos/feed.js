@@ -97,8 +97,12 @@ export async function byDate(event, context, callback) {
   console.log({ data })
 
   const location = data ? data.location : null
-  const day = data ? data.day : null
-  if (!data || !location || !day) {
+  const daysAgo = data ? (data.daysAgo || 0) : 0
+
+  console.log('location:', location)
+  console.log('daysAgo:', daysAgo)
+
+  if (!data || !location) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -108,8 +112,6 @@ export async function byDate(event, context, callback) {
     return false
   }
 
-  console.log('location:', location)
-  console.log('day:', day)
 
   let limit = data ? data.limit : null
   let offset = data ? data.offset : null
@@ -125,21 +127,22 @@ export async function byDate(event, context, callback) {
 
   const point = Sequelize.fn('ST_MakePoint', lat, lng)
 
-  console.log('today: ', moment(day).toDate())
-  console.log('yesterday: ', moment(day).subtract(1, 'days').toDate())
   // retrieve photos
   let photos
+
   try {
     photos = await Photo.findAll({
       where: {
         createdAt: {
-          [Op.lte]: moment(day).toDate(),
-          [Op.gte]: moment(day).subtract(1, 'days').toDate(),
+          // [Op.gte]: moment(day).subtract(1, 'days').toDate(),
+          [Op.gte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo) - (24 * 60 * 60 * 1000),
+          [Op.lte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo),
         },
       },
       attributes: {
         include: [
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
+          // [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'creationDate'],
         ],
       },
       order: Sequelize.col('distance'),
