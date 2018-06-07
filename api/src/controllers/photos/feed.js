@@ -98,9 +98,11 @@ export async function byDate(event, context, callback) {
 
   const location = data ? data.location : null
   const daysAgo = data ? (data.daysAgo || 0) : 0
+  const timeZoneShiftHours = data ? (data.timeZoneShiftHours || 0) : 0 // defaults to UTC
 
   console.log('location:', location)
   console.log('daysAgo:', daysAgo)
+  console.log('timeZoneShiftHours:', timeZoneShiftHours)
 
   if (!data || !location) {
     console.log('setting status to 400')
@@ -138,11 +140,11 @@ export async function byDate(event, context, callback) {
           // [Op.gte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo) - (24 * 60 * 60 * 1000),
           [Op.gte]: moment()
             .startOf('day')
-            .subtract(4, 'hours')
+            .subtract(timeZoneShiftHours, 'hours')
             .subtract(daysAgo, 'days'),
           [Op.lte]: moment()
             .startOf('day')
-            .subtract(4, 'hours')
+            .subtract(timeZoneShiftHours, 'hours')
             .subtract(daysAgo, 'days')
             .add(1, 'days'),
         },

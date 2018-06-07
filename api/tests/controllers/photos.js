@@ -172,6 +172,8 @@ describe('photos', () => {
 
     it('should be able to query feed photos by specific date', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const timeZoneShiftHours = moment().utcOffset() / -60
+      // console.log({ timeZoneShiftHours })
 
       createTestPhoto(location, 0)
 
@@ -188,6 +190,7 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
         .send({ location })
         .send({ daysAgo: 0 })
+        .send({ timeZoneShiftHours })
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -209,6 +212,7 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
         .send({ location })
         .send({ daysAgo: 1 })
+        .send({ timeZoneShiftHours })
 
       expect(response1.status).to.equal(200)
       expect(response1.body.status).to.equal('success')
@@ -221,6 +225,7 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
         .send({ location })
         .send({ daysAgo: 2 })
+        .send({ timeZoneShiftHours })
 
       expect(response2.status).to.equal(200)
       expect(response2.body.status).to.equal('success')
