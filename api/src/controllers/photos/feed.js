@@ -148,6 +148,7 @@ export async function byDate(event, context, callback) {
             .subtract(daysAgo, 'days')
             .add(1, 'days'),
         },
+        active: true,
       },
       attributes: {
         include: [
