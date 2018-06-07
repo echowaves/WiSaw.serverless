@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize'
+import moment from 'moment'
 
 import Photo from '../../models/photo'
 
@@ -134,8 +135,16 @@ export async function byDate(event, context, callback) {
       where: {
         createdAt: {
           // [Op.gte]: moment(day).subtract(1, 'days').toDate(),
-          [Op.gte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo) - (24 * 60 * 60 * 1000),
-          [Op.lte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo),
+          // [Op.gte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo) - (24 * 60 * 60 * 1000),
+          [Op.gte]: moment()
+            .startOf('day')
+            .subtract(4, 'hours')
+            .subtract(daysAgo, 'days'),
+          [Op.lte]: moment()
+            .startOf('day')
+            .subtract(4, 'hours')
+            .subtract(daysAgo, 'days')
+            .add(1, 'days'),
         },
       },
       attributes: {

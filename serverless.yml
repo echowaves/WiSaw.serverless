@@ -177,15 +177,6 @@ functions:
           method: delete
           private: false
 
-  cleanupAllGet: # http endpoint
-    handler: api/src/controllers/photos/cleanupAll.main
-    description: cleaning up all data (only enabled in test)
-    events:
-      - http:
-          path: cleanup
-          method: get
-          private: false
-
 resources:
   Resources:
     # https://serverless.com/blog/building-a-serverless-screenshot-service-with-lambda/

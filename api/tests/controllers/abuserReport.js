@@ -12,8 +12,8 @@ describe('abusereport', () => {
   it('should not be able to post an abuseReport with no parameters', async () => {
     const response =
     await request
-        .post('/abusereport')
-        .set('Content-Type', 'application/json')
+      .post('/abusereport')
+      .set('Content-Type', 'application/json')
 
     expect(response.status).to.equal(400)
     expect(response.body.error).to.equal('parameters missing')
@@ -24,9 +24,9 @@ describe('abusereport', () => {
 
     const response =
     await request
-        .post('/abusereport')
-        .set('Content-Type', 'application/json')
-        .send({ uuid: guid })
+      .post('/abusereport')
+      .set('Content-Type', 'application/json')
+      .send({ uuid: guid })
 
     expect(response.status).to.equal(201)
     expect(response.body.status).to.equal('success')
@@ -58,10 +58,10 @@ describe('abusereport', () => {
 
     const response =
     await request
-        .post('/photos')
-        .set('Content-Type', 'application/json')
-        .send({ uuid: guid })
-        .send({ location: point })
+      .post('/photos')
+      .set('Content-Type', 'application/json')
+      .send({ uuid: guid })
+      .send({ location: point })
 
     expect(response.status).to.equal(401)
     expect(response.body.error).to.equal('Anauthorized.')

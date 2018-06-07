@@ -8,6 +8,8 @@ import axios from 'axios'
 import { config } from '../../../.env.test'
 
 import Photo from '../../src/models/photo'
+import ContactForm from '../../src/models/contactForm'
+import AbuseReport from '../../src/models/abuseReport'
 
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
@@ -42,11 +44,15 @@ function createTestPhoto(location, daysAgo) {
 
 describe('photos', () => {
   beforeEach(async () => {
-    try {
-      await axios.get(`${config().HOST}/cleanup`)
-    } catch (err) {
-      console.log('Unable to cleanup')
-    }
+    await Photo.destroy({
+      where: {},
+    })
+    await ContactForm.destroy({
+      where: {},
+    })
+    await AbuseReport.destroy({
+      where: {},
+    })
   })
   describe('create', () => {
     it('should not be able to post a photo with no parameters', async () => {
@@ -164,11 +170,16 @@ describe('photos', () => {
     })
 
 
-    it.only('should be able to query feed photos by specific date', async () => {
+    it('should be able to query feed photos by specific date', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
       createTestPhoto(location, 0)
+
       createTestPhoto(location, 1)
+      createTestPhoto(location, 1)
+
+      createTestPhoto(location, 2)
+      createTestPhoto(location, 2)
       createTestPhoto(location, 2)
 
       const response =
@@ -176,7 +187,7 @@ describe('photos', () => {
         .post('/photos/feedByDate')
         .set('Content-Type', 'application/json')
         .send({ location })
-        .send({ daysAgo: 1 })
+        .send({ daysAgo: 0 })
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -191,9 +202,32 @@ describe('photos', () => {
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
       expect(response.body.photos[0].likes).to.eq(3)
+
+      const response1 =
+      await request
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+        .send({ daysAgo: 1 })
+
+      expect(response1.status).to.equal(200)
+      expect(response1.body.status).to.equal('success')
+
+      expect(response1.body.photos.length).to.equal(2)
+
+      const response2 =
+      await request
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+        .send({ daysAgo: 2 })
+
+      expect(response2.status).to.equal(200)
+      expect(response2.body.status).to.equal('success')
+
+      expect(response2.body.photos.length).to.equal(3)
     })
   })
-
 
   describe('get', () => {
     it('should be able to get one photo by id', async () => {

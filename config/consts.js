@@ -13,7 +13,7 @@ if ((process.env.STAGE || 'test') === 'test') {
 // eslint-disable-next-line import/prefer-default-export
 export const sequelize = new Sequelize(process.env.DATABASE_URL, {
   // disable logging; default: console.log
-  logging: true,
+  logging: false,
   operatorsAliases: Sequelize.Op, // use Sequelize.Op
 })
 

@@ -12,8 +12,8 @@ describe('/contactform', () => {
   it('should not be able to post an contactForm with no parameters', async () => {
     const response =
     await request
-        .post('/contactform')
-        .set('Content-Type', 'application/json')
+      .post('/contactform')
+      .set('Content-Type', 'application/json')
 
     expect(response.status).to.equal(400)
     expect(response.body.error).to.equal('parameters missing')
@@ -24,10 +24,10 @@ describe('/contactform', () => {
     const description = 'test contact form'
     const response =
     await request
-        .post('/contactform')
-        .set('Content-Type', 'application/json')
-        .send({ uuid: guid })
-        .send({ description })
+      .post('/contactform')
+      .set('Content-Type', 'application/json')
+      .send({ uuid: guid })
+      .send({ description })
 
     expect(response.status).to.equal(201)
     expect(response.body.status).to.equal('success')
