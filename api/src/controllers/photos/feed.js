@@ -132,6 +132,8 @@ export async function byDate(event, context, callback) {
   // retrieve photos
   let photos
 
+  // console.log('moment: ', moment())
+
   try {
     photos = await Photo.findAll({
       where: {
@@ -141,14 +143,14 @@ export async function byDate(event, context, callback) {
           [Op.gte]: moment()
             .startOf('day')
             .subtract(timeZoneShiftHours, 'hours')
-            .subtract(daysAgo, 'days'),
+            .subtract(daysAgo, 'days')
+            .subtract(1, 'days'),
           [Op.lte]: moment()
             .startOf('day')
             .subtract(timeZoneShiftHours, 'hours')
-            .subtract(daysAgo, 'days')
-            .add(1, 'days'),
+            .subtract(daysAgo, 'days'),
         },
-        active: true,
+        // active: true,
       },
       attributes: {
         include: [
