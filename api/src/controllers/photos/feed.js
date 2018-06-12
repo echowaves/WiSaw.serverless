@@ -97,7 +97,7 @@ export async function byDate(event, context, callback) {
   console.log({ data })
 
   const location = data ? data.location : null
-  const daysAgo = data ? (data.daysAgo || 0) : 0
+  let daysAgo = data ? (data.daysAgo || 0) : 0
   const timeZoneShiftHours = data ? (data.timeZoneShiftHours || 0) : 0 // defaults to UTC
 
   console.log('location:', location)
@@ -132,22 +132,23 @@ export async function byDate(event, context, callback) {
   // retrieve photos
   let photos
 
-  // console.log('moment: ', moment())
-
   try {
+    const utcDate = moment().startOf('day');
+    const currentDate = moment().subtract(timeZoneShiftHours, 'hours').startOf('day');
+
+    if (utcDate === currentDate) {
+      daysAgo += 1
+    }
+    // console.log('utcDate: ', utcDate)
+    // console.log('currentDate: ', currentDate)
+    // console.log('daysAgo: ', daysAgo)
+
     photos = await Photo.findAll({
       where: {
         createdAt: {
-          // [Op.gte]: moment(day).subtract(1, 'days').toDate(),
-          // [Op.gte]: Date.now() - (24 * 60 * 60 * 1000 * daysAgo) - (24 * 60 * 60 * 1000),
-          [Op.gte]: moment()
-            .startOf('day')
-            .subtract(timeZoneShiftHours, 'hours')
-            .subtract(daysAgo, 'days')
-            .subtract(1, 'days'),
-          [Op.lte]: moment()
-            .startOf('day')
-            .subtract(timeZoneShiftHours, 'hours')
+          [Op.gte]: currentDate.clone()
+            .subtract(daysAgo, 'days'),
+          [Op.lte]: currentDate.clone().add(1, 'days')
             .subtract(daysAgo, 'days'),
         },
         // active: true,
