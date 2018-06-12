@@ -134,14 +134,14 @@ export async function byDate(event, context, callback) {
 
   try {
     const utcDate = moment().startOf('day');
-    const currentDate = moment().subtract(timeZoneShiftHours, 'hours').startOf('day');
+    const currentDate = moment().startOf('day').add(timeZoneShiftHours, 'hours');
 
-    if (utcDate === currentDate) {
-      daysAgo += 1
-    }
-    // console.log('utcDate: ', utcDate)
-    // console.log('currentDate: ', currentDate)
-    // console.log('daysAgo: ', daysAgo)
+    // if (utcDate.date() === currentDate.date()) {
+    //   daysAgo += 1
+    // }
+    console.log('utcDate: ', utcDate)
+    console.log('currentDate: ', currentDate)
+    console.log('daysAgo: ', daysAgo)
 
     photos = await Photo.findAll({
       where: {

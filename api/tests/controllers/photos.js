@@ -20,7 +20,7 @@ function sleep(ms) {
 
 function createTestPhoto(location, daysAgo) {
   const guid = uuid()
-  const createdAt = moment().subtract(daysAgo + 1, 'days').add(3, 'minutes')
+  const createdAt = moment().subtract(daysAgo, 'days').add(3, 'minutes')
   const updatedAt = createdAt
   const active = true
   const likes = 3
