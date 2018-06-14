@@ -97,7 +97,7 @@ export async function byDate(event, context, callback) {
   console.log({ data })
 
   const location = data ? data.location : null
-  let daysAgo = data ? (data.daysAgo || 0) : 0
+  const daysAgo = data ? (data.daysAgo || 0) : 0
   const timeZoneShiftHours = data ? (data.timeZoneShiftHours || 0) : 0 // defaults to UTC
 
   console.log('location:', location)
@@ -151,7 +151,7 @@ export async function byDate(event, context, callback) {
           [Op.lte]: currentDate.clone().add(1, 'days')
             .subtract(daysAgo, 'days'),
         },
-        // active: true,
+        active: true,
       },
       attributes: {
         include: [

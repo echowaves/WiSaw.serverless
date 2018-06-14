@@ -6,18 +6,20 @@ export async function main(event, context, callback) {
   // and not wait for node event loop to be empty.
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
-  let results = { photos: 'not found' }
-  let rowids = {}
+  // const results = { photos: 'not found' }
+  // const rowids = {}
   let count = {}
 
   console.log('cleaning up old photos')
   // cleanup photos
   try {
     await sequelize.query('DELETE FROM "AbuseReports" where "createdAt" < NOW() - INTERVAL \'7 days\'')
-    rowids = await sequelize.query('select id from (select id from "Photos" where "active" = true order by id desc limit 75) as r order by id limit 1')
-    if (rowids[0].length > 0) {
-      results = await sequelize.query(`update "Photos" set "active" = false where "updatedAt" < NOW() - INTERVAL '24 hours' and id < ${rowids[0][0].id} and "active" = true`)
-    }
+    // eslint-disable-next-line max-len
+    // rowids = await sequelize.query('select id from (select id from "Photos" where "active" = true order by id desc limit 75) as r order by id limit 1')
+    // if (rowids[0].length > 0) {
+    // eslint-disable-next-line max-len
+    //   results = await sequelize.query(`update "Photos" set "active" = false where "updatedAt" < NOW() - INTERVAL '24 hours' and id < ${rowids[0][0].id} and "active" = true`)
+    // }
     count = await sequelize.query('select count(*) FROM "Photos"')
   } catch (err) {
     console.log('Unable to cleanup Photos', err)
@@ -29,10 +31,10 @@ export async function main(event, context, callback) {
     return
   }
 
-  console.log('results: ', results)
+  // console.log('results: ', results)
 
 
-  const rowid = rowids[0].length > 0 ? rowids[0][0].id : 0
+  // const rowid = rowids[0].length > 0 ? rowids[0][0].id : 0
 
 
   try {
@@ -40,8 +42,8 @@ export async function main(event, context, callback) {
       statusCode: 200,
       body: JSON.stringify({
         status: 'success',
-        results,
-        rowid,
+        // results,
+        // rowid,
         count,
       }),
     }
