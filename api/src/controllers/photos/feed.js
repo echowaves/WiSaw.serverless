@@ -30,7 +30,7 @@ export async function main(event, context, callback) {
   let limit = data ? data.limit : null
   let offset = data ? data.offset : null
   if (!limit) {
-    limit = 100
+    limit = 500
   }
   if (!offset) {
     offset = 0
@@ -52,7 +52,8 @@ export async function main(event, context, callback) {
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
         ],
       },
-      order: Sequelize.col('distance'),
+      // order: Sequelize.col('distance'),
+      order: [Sequelize.col('id'), 'DESC'],
       limit,
       offset,
     })
