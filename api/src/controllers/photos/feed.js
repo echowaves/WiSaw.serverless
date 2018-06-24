@@ -28,9 +28,11 @@ export async function main(event, context, callback) {
   console.log('location:', location)
 
   let limit = data ? data.limit : null
+  limit = 1000
+
   let offset = data ? data.offset : null
   if (!limit) {
-    limit = 500
+    limit = 100
   }
   if (!offset) {
     offset = 0
@@ -53,7 +55,9 @@ export async function main(event, context, callback) {
         ],
       },
       // order: Sequelize.col('distance'),
-      order: [Sequelize.col('id'), 'DESC'],
+      order: [
+        ['id', 'DESC'],
+      ],
       limit,
       offset,
     })
