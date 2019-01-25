@@ -8,7 +8,7 @@ export async function main(event, context, callback) {
   // and not wait for node event loop to be empty.
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
-  const { photoId } = event.pathParameters
+  const { id } = event.pathParameters
 
   const data = JSON.parse(event.body)
 
@@ -17,7 +17,7 @@ export async function main(event, context, callback) {
 
   const comment = data ? data.comment : null
 
-  if (!data || !uuid || !comment || !photoId) {
+  if (!data || !uuid || !comment || !id) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -31,7 +31,7 @@ export async function main(event, context, callback) {
   // create and safe record
   try {
     await Comment.create({
-      photoId,
+      photoId: id,
       uuid,
       comment,
       createdAt,

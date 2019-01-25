@@ -6,9 +6,9 @@ export async function main(event, context, callback) {
   // and not wait for node event loop to be empty.
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
-  const { photoId } = event.pathParameters
+  const { id } = event.pathParameters
 
-  if (!photoId) {
+  if (!id) {
     console.log('setting status to 404')
     const response = {
       statusCode: 404,
@@ -22,7 +22,7 @@ export async function main(event, context, callback) {
   let comments
   try {
     comments = await Comment.findAll({
-      where: { active: true, photoId },
+      where: { active: true, photoId: id },
       order: [
         ['id', 'DESC'],
       ],
