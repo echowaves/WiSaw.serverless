@@ -1,10 +1,8 @@
 import uuid from 'uuid'
-import fs from 'fs'
 import moment from 'moment'
 
 import supertest from 'supertest'
 import chai from 'chai'
-import axios from 'axios'
 import { config } from '../../../.env.test'
 
 import Photo from '../../src/models/photo'
@@ -12,10 +10,6 @@ import Comment from '../../src/models/comment'
 
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 async function createTestPhoto(location, daysAgo) {
   const guid = uuid()
