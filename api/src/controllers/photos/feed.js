@@ -81,7 +81,6 @@ export async function main(event, context, callback) {
     return false
   }
 
-
   // Resond to request indicating the photo feed was created
   const response = {
     statusCode: 200,
