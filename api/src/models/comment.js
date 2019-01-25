@@ -35,6 +35,10 @@ const Comment = sequelize.define('Comment', {
     allowNull: false,
     type: Sequelize.DATE,
   },
+  updatedAt: {
+    allowNull: false,
+    type: Sequelize.DATE,
+  },
 })
 
 // Adding a class level method

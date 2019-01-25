@@ -14,7 +14,6 @@ export async function main(event, context, callback) {
 
   const uuid = data ? data.uuid : null
 
-
   const comment = data ? data.comment : null
 
   if (!data || !uuid || !comment || !id) {
@@ -27,6 +26,7 @@ export async function main(event, context, callback) {
     return
   }
   const createdAt = moment()
+  const updatedAt = createdAt
 
   // create and safe record
   try {
@@ -35,6 +35,7 @@ export async function main(event, context, callback) {
       uuid,
       comment,
       createdAt,
+      updatedAt,
     })
   } catch (err) {
     console.log('unable to create comment', err)
@@ -49,7 +50,7 @@ export async function main(event, context, callback) {
   // Resond to request indicating the create contactForm was created
   const response = {
     statusCode: 201,
-    body: JSON.stringify({ status: 'success' }),
+    body: JSON.stringify({ status: 'success', comment }),
   }
   callback(null, response)
 }

@@ -34,6 +34,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
     })
       .then(() => queryInterface.addIndex('Comments', ['photoId'])),
   down: (queryInterface, Sequelize) => // eslint-disable-line no-unused-vars
