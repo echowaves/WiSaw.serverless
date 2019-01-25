@@ -112,4 +112,78 @@ describe('comments', () => {
       expect(response.body.error).to.equal('not found')
     })
   })
+
+  describe('list', () => {
+    it('should list comments in reverse order', async () => {
+      const guid = uuid()
+      const comments = ['comment1', 'comment2', 'comment3']
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const photo = await createTestPhoto(location, 0)
+
+      // create 3 comments
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 100)) // sleep
+
+      const response =
+      await request
+        .get(`/photos/${photo.id}/comments`)
+        .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+      expect(response.body.comments.length).to.eq(comments.length)
+      expect(response.body.comments[0].id).to.be.greaterThan(response.body.comments[1].id)
+      expect(response.body.comments[1].id).to.be.greaterThan(response.body.comments[2].id)
+    })
+
+    it('should list only active comments', async () => {
+      const guid = uuid()
+      const comments = ['comment1', 'comment2', 'comment3']
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const photo = await createTestPhoto(location, 0)
+
+      // create 3 comments
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 100)) // sleep
+
+      // need to do this so that we know the id's of the newly created comments
+      const commentResponse =
+      await request
+        .get(`/photos/${photo.id}/comments`)
+        .set('Content-Type', 'application/json')
+
+      // deactivate here
+      await request
+        .delete(`/comments/${commentResponse.body.comments[0].id}`)
+        .set('Content-Type', 'application/json')
+        .send({ deactivatedBy: guid })
+
+      await new Promise(resolve => setTimeout(resolve, 100)) // sleep
+
+      const response =
+      await request
+        .get(`/photos/${photo.id}/comments`)
+        .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+      expect(response.body.comments.length).to.eq(comments.length - 1)
+    })
+  })
 })
