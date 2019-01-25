@@ -14,9 +14,9 @@ export async function main(event, context, callback) {
 
   const uuid = data ? data.uuid : null
 
-  const comment = data ? data.comment : null
+  const commentText = data ? data.comment : null
 
-  if (!data || !uuid || !comment || !id) {
+  if (!data || !uuid || !commentText || !id) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -29,11 +29,12 @@ export async function main(event, context, callback) {
   const updatedAt = createdAt
 
   // create and safe record
+  let comment
   try {
-    await Comment.create({
+    comment = await Comment.create({
       photoId: id,
       uuid,
-      comment,
+      comment: commentText,
       createdAt,
       updatedAt,
     })

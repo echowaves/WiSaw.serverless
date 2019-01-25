@@ -1,4 +1,4 @@
-import Comment from '../../models/photo'
+import Comment from '../../models/comment'
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {
@@ -7,6 +7,8 @@ export async function main(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
   const { id } = event.pathParameters
+
+  console.log({ id })
 
   const data = JSON.parse(event.body)
 
@@ -25,8 +27,10 @@ export async function main(event, context, callback) {
   let comment
   try {
     comment = await Comment.update(
-      { active: false },
-      { deactivatedBy },
+      {
+        active: false,
+        deactivatedBy,
+      },
       { where: { id } },
     )
 
@@ -48,7 +52,7 @@ export async function main(event, context, callback) {
     return
   }
 
-  // the photo was deteled
+  // the comment was deteled
   const response = {
     statusCode: 200,
     body: JSON.stringify({ status: 'success' }),
