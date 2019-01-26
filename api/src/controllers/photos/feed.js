@@ -52,6 +52,7 @@ export async function main(event, context, callback) {
       attributes: {
         include: [
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
+          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id")'), 'comments'],
         ],
       },
       // order: Sequelize.col('distance'),
@@ -161,6 +162,7 @@ export async function byDate(event, context, callback) {
         include: [
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
           // [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'creationDate'],
+          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id")'), 'comments'],
         ],
       },
       order: Sequelize.col('distance'),

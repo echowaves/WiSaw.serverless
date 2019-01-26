@@ -155,8 +155,65 @@ describe('photos', () => {
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
     })
-  })
 
+    it('should show the right number of comments in the feed photos', async () => {
+      const location = { type: 'Point', coordinates: [38.80, -77.98] }
+      const guid = uuid()
+      const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
+
+      const responseCreate =
+      await request
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
+
+      const options = {
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      }
+      // upload the image
+      await axios.put(responseCreate.body.uploadURL, contents, options)
+
+      // should activated by thumnail creating after uploading is complete,
+      // but let's wait for it to happen
+      await sleep(3000) // takes about 3 seconds for the image to activate after it's uploaded
+
+      // add some comments here
+      const comments = ['comment1', 'comment2', 'comment3']
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${responseCreate.body.photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+      await sleep(500)
+
+      const response =
+      await request
+        .post('/photos/feed')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+
+      expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0]).to.have.property('comments')
+      expect(response.body.photos[0].comments).to.eq('3')
+      expect(response.body.photos[0]).to.have.property('id')
+      expect(response.body.photos[0]).to.have.property('uuid')
+      expect(response.body.photos[0]).to.have.property('location')
+      expect(response.body.photos[0]).to.have.property('createdAt')
+      expect(response.body.photos[0]).to.have.property('distance')
+      expect(response.body.photos[0]).to.have.property('getImgUrl')
+      expect(response.body.photos[0]).to.have.property('getThumbUrl')
+      expect(response.body.photos[0].active).to.eq(true)
+      expect(response.body.photos[0].likes).to.eq(0)
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+    })
+  })
 
   describe('feed.byDate', () => {
     it('should not be able to get a photo feed by date with no parameters', async () => {
@@ -232,7 +289,55 @@ describe('photos', () => {
 
       expect(response2.body.photos.length).to.equal(3)
     })
+
+
+    it('should show the right number of comments in the feedByDate photos', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const timeZoneShiftHours = moment().utcOffset() / -60
+      // console.log({ timeZoneShiftHours })
+
+      const photo = await createTestPhoto(location, 0)
+
+      // add some comments here
+      const comments = ['comment1', 'comment2', 'comment3']
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+      await sleep(500)
+
+      const response =
+      await request
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+        .send({ daysAgo: 0 })
+        .send({ timeZoneShiftHours })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0]).to.have.property('comments')
+      expect(response.body.photos[0].comments).to.eq('3')
+
+      expect(response.body.photos[0]).to.have.property('id')
+      expect(response.body.photos[0]).to.have.property('uuid')
+      expect(response.body.photos[0]).to.have.property('location')
+      expect(response.body.photos[0]).to.have.property('createdAt')
+      expect(response.body.photos[0]).to.have.property('distance')
+      expect(response.body.photos[0]).to.have.property('getImgUrl')
+      expect(response.body.photos[0]).to.have.property('getThumbUrl')
+      expect(response.body.photos[0].active).to.eq(true)
+      expect(response.body.photos[0].likes).to.eq(3)
+    })
   })
+
 
   describe('get', () => {
     it('should be able to get one photo by id', async () => {
