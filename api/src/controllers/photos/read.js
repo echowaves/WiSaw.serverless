@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize'
+
 import Photo from '../../models/photo'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -15,6 +17,11 @@ export async function main(event, context, callback) {
       where: {
         id,
         active: true,
+      },
+      attributes: {
+        include: [
+          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id")'), 'commentsCount'],
+        ],
       },
     })
     if (!photo) {

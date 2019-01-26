@@ -142,6 +142,8 @@ describe('photos', () => {
         .send({ location })
 
       expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0]).to.have.property('commentsCount')
+      expect(response.body.photos[0].commentsCount).to.eq('0')
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -253,6 +255,8 @@ describe('photos', () => {
       expect(response.body.status).to.equal('success')
 
       expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0]).to.have.property('commentsCount')
+      expect(response.body.photos[0].commentsCount).to.eq('0')
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -325,7 +329,6 @@ describe('photos', () => {
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('commentsCount')
       expect(response.body.photos[0].commentsCount).to.eq('3')
-
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -377,6 +380,8 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
 
       expect(response.body.photo).to.have.property('id')
+      expect(response.body.photo).to.have.property('commentsCount')
+      expect(response.body.photo.commentsCount).to.eq('0')
       expect(response.body.photo).to.have.property('uuid')
       expect(response.body.photo).to.have.property('location')
       expect(response.body.photo).to.have.property('getImgUrl')
@@ -391,6 +396,70 @@ describe('photos', () => {
       expect(response.body.status).to.equal('success')
     })
 
+    it('should be able to get right number of commentss for photo by id', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const contents = fs.readFileSync('./api/tests/controllers/data/large.jpg')
+
+      const responseCreate =
+      await request
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
+
+      let response =
+      await request
+        .get(`/photos/${responseCreate.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+      expect(response.status).to.equal(404)
+
+      const options = {
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      }
+      // upload the image
+      await axios.put(responseCreate.body.uploadURL, contents, options)
+
+      // should activated by thumnail creating after uploading is complete,
+      // but let's wait for it to happen
+      await sleep(3000) // takes about 3 seconds for the image to activate after it's uploaded
+
+      // add some comments here
+      const comments = ['comment1', 'comment2', 'comment3']
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${responseCreate.body.photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+      await sleep(500)
+
+
+      response =
+      await request
+        .get(`/photos/${responseCreate.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+
+      expect(response.body.photo).to.have.property('id')
+      expect(response.body.photo).to.have.property('commentsCount')
+      expect(response.body.photo.commentsCount).to.eq('3')
+      expect(response.body.photo).to.have.property('uuid')
+      expect(response.body.photo).to.have.property('location')
+      expect(response.body.photo).to.have.property('getImgUrl')
+      expect(response.body.photo).to.have.property('getThumbUrl')
+      expect(response.body.photo).to.have.property('createdAt')
+      expect(response.body.photo).to.not.have.property('distance')
+      expect(response.body.photo.active).to.eq(true)
+
+      expect(response.body.photo.id).to.eq(responseCreate.body.photo.id)
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+    })
 
     it('should not be able to get non existing photo by id', async () => {
       const response =
@@ -556,6 +625,8 @@ describe('photos', () => {
         .send({ location })
 
       expect(feedResponse.body.photos.length).to.equal(1)
+      expect(feedResponse.body.photos[0]).to.have.property('commentsCount')
+      expect(feedResponse.body.photos[0].commentsCount).to.eq('0')
       expect(feedResponse.body.photos[0]).to.have.property('id')
       expect(feedResponse.body.photos[0]).to.have.property('uuid')
       expect(feedResponse.body.photos[0]).to.have.property('location')
