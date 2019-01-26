@@ -198,8 +198,8 @@ describe('photos', () => {
         .send({ location })
 
       expect(response.body.photos.length).to.equal(1)
-      expect(response.body.photos[0]).to.have.property('comments')
-      expect(response.body.photos[0].comments).to.eq('3')
+      expect(response.body.photos[0]).to.have.property('commentsCount')
+      expect(response.body.photos[0].commentsCount).to.eq('3')
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -323,8 +323,8 @@ describe('photos', () => {
       expect(response.body.status).to.equal('success')
 
       expect(response.body.photos.length).to.equal(1)
-      expect(response.body.photos[0]).to.have.property('comments')
-      expect(response.body.photos[0].comments).to.eq('3')
+      expect(response.body.photos[0]).to.have.property('commentsCount')
+      expect(response.body.photos[0].commentsCount).to.eq('3')
 
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
