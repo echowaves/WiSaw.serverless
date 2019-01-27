@@ -20,7 +20,7 @@ export async function main(event, context, callback) {
       },
       attributes: {
         include: [
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id")'), 'commentsCount'],
+          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
         ],
       },
     })
