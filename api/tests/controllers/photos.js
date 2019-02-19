@@ -652,4 +652,110 @@ describe('photos', () => {
       expect(response.body.error).to.equal('not found')
     })
   })
+
+  describe('get prev/next', () => {
+    it('should be able to get one prev photo by id', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      // lets create 2 active and 1 inactive photos
+      await createTestPhoto(location, 0)
+      await sleep(300) // takes about 3 seconds for the image to activate after it's uploaded
+
+      const photo = await createTestPhoto(location, 1)
+      await request
+        .put(`/photos/${photo.id}/deactivate`)
+        .set('Content-Type', 'application/json')
+
+      await createTestPhoto(location, 2)
+      await sleep(300) // takes about 3 seconds for the image to activate after it's uploaded
+
+
+      const response1 =
+      await request
+        .get('/photos/prev/123123123')
+        .set('Content-Type', 'application/json')
+      expect(response1.status).to.equal(200)
+
+
+      const response2 =
+      await request
+        .get(`/photos/prev/${response1.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+      expect(response2.status).to.equal(200)
+
+      expect(response2.body.photo).to.have.property('id')
+      expect(response2.body.photo).to.have.property('commentsCount')
+      expect(response2.body.photo.commentsCount).to.eq('0')
+      expect(response2.body.photo).to.have.property('uuid')
+      expect(response2.body.photo).to.have.property('location')
+      expect(response2.body.photo).to.have.property('getImgUrl')
+      expect(response2.body.photo).to.have.property('getThumbUrl')
+      expect(response2.body.photo).to.have.property('createdAt')
+      expect(response2.body.photo).to.not.have.property('distance')
+      expect(response2.body.photo.active).to.eq(true)
+
+      expect(response2.body.photo.id).to.be.lt(response1.body.photo.id)
+
+      expect(response2.status).to.equal(200)
+      expect(response2.body.status).to.equal('success')
+
+      const response3 =
+      await request
+        .get(`/photos/prev/${response2.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+      expect(response3.status).to.equal(404)
+    })
+
+    it('should be able to get one next photo by id', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      // lets create 2 active and 1 inactive photos
+      await createTestPhoto(location, 0)
+      await sleep(300) // takes about 3 seconds for the image to activate after it's uploaded
+
+      const photo = await createTestPhoto(location, 1)
+      await request
+        .put(`/photos/${photo.id}/deactivate`)
+        .set('Content-Type', 'application/json')
+
+      await createTestPhoto(location, 2)
+      await sleep(300) // takes about 3 seconds for the image to activate after it's uploaded
+
+
+      const response1 =
+      await request
+        .get('/photos/next/0')
+        .set('Content-Type', 'application/json')
+      expect(response1.status).to.equal(200)
+
+
+      const response2 =
+      await request
+        .get(`/photos/next/${response1.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+      expect(response2.status).to.equal(200)
+
+      expect(response2.body.photo).to.have.property('id')
+      expect(response2.body.photo).to.have.property('commentsCount')
+      expect(response2.body.photo.commentsCount).to.eq('0')
+      expect(response2.body.photo).to.have.property('uuid')
+      expect(response2.body.photo).to.have.property('location')
+      expect(response2.body.photo).to.have.property('getImgUrl')
+      expect(response2.body.photo).to.have.property('getThumbUrl')
+      expect(response2.body.photo).to.have.property('createdAt')
+      expect(response2.body.photo).to.not.have.property('distance')
+      expect(response2.body.photo.active).to.eq(true)
+
+      expect(response2.body.photo.id).to.be.gt(response1.body.photo.id)
+
+      expect(response2.status).to.equal(200)
+      expect(response2.body.status).to.equal('success')
+
+      const response3 =
+      await request
+        .get(`/photos/next/${response2.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+      expect(response3.status).to.equal(404)
+    })
+  })
 })

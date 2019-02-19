@@ -168,6 +168,24 @@ functions:
           method: get
           private: false
 
+  photosGetPrev: # http endpoint
+    handler: api/src/controllers/photos/readPrev.main
+    description: get prev valid photo
+    events:
+      - http:
+          path: photos/prev/{id}
+          method: get
+          private: false
+
+  photosGetNext: # http endpoint
+    handler: api/src/controllers/photos/readNext.main
+    description: get next valid photo
+    events:
+      - http:
+          path: photos/next/{id}
+          method: get
+          private: false
+
   photosDelete: # http endpoint
     handler: api/src/controllers/photos/delete.main
     description: (CRU'D') - photo
