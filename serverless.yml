@@ -175,7 +175,7 @@ functions:
       - http:
           path: photos/prev/{id}
           method: get
-          private: false
+          cors: true
 
   photosGetNext: # http endpoint
     handler: api/src/controllers/photos/readNext.main
@@ -184,7 +184,7 @@ functions:
       - http:
           path: photos/next/{id}
           method: get
-          private: false
+          cors: true
 
   photosDelete: # http endpoint
     handler: api/src/controllers/photos/delete.main

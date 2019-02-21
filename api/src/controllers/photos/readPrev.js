@@ -57,6 +57,10 @@ export async function main(event, context, callback) {
   // Resond to request indicating the photo was created
   const response = {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+      // 'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+    },
     body: JSON.stringify({ status: 'success', photo }),
   }
   callback(null, response)
