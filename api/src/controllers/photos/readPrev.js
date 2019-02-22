@@ -59,7 +59,7 @@ export async function main(event, context, callback) {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-      // 'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+      'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
     },
     body: JSON.stringify({ status: 'success', photo }),
   }
