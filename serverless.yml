@@ -166,7 +166,7 @@ functions:
       - http:
           path: photos/{id}
           method: get
-          private: false
+          cors: true
 
   photosGetPrev: # http endpoint
     handler: api/src/controllers/photos/readPrev.main
