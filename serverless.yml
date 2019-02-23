@@ -221,6 +221,7 @@ functions:
           path: photos/{id}/comments
           method: get
           private: false
+          cors: true
 
 resources:
   Resources:
