@@ -2,6 +2,8 @@
 import sm from 'sitemap'
 import AWS from 'aws-sdk'
 
+import Sequelize from 'sequelize'
+
 import Photo from '../../models/photo'
 // import Comment from '../../models/comment'
 
@@ -21,6 +23,11 @@ export async function main(event, context, cb) {
   try {
     photos = await Photo.findAll({
       where: { active: true },
+      attributes: {
+        include: [
+          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+        ],
+      },
       order: [
         ['id', 'DESC'],
       ],
@@ -41,8 +48,12 @@ export async function main(event, context, cb) {
     cacheTime: 600000,
   })
 
+  sitemap.add({ url: '/' })
+
   photos.forEach((photo) => {
-    sitemap.add({ url: `/photos/${photo.id}` })
+    if (photo.commentsCount > 0) {
+      sitemap.add({ url: `/photos/${photo.id}` })
+    }
   })
 
   // download the original to disk
