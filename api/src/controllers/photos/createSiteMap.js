@@ -12,7 +12,7 @@ import Photo from '../../models/photo'
 export async function main(event, context, cb) {
   if (process.env.STAGE !== 'prod') { // run only in prod
     const response = {
-      statusCode: 499.9,
+      statusCode: 400,
       body: JSON.stringify({ error: 'wrong environment' }),
     }
     cb(null, response)
@@ -51,7 +51,9 @@ export async function main(event, context, cb) {
   sitemap.add({ url: '/' })
 
   photos.forEach((photo) => {
-    if (photo.commentsCount > 0) {
+    const jsonObj = JSON.parse(JSON.stringify(photo))
+    // console.log(jsonObj.commentsCount)
+    if (jsonObj.commentsCount !== '0') {
       sitemap.add({ url: `/photos/${photo.id}` })
     }
   })
@@ -83,6 +85,8 @@ export async function main(event, context, cb) {
     statusCode: 200,
     body: JSON.stringify({ status: 'success' }),
   }
+  console.log('done')
+
   cb(null, response)
   return true
 }
