@@ -38,6 +38,11 @@ export async function main(event, context, callback) {
     if (!photo) {
       const response = {
         statusCode: 404,
+        headers: {
+          'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+          'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+          'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+        },
         body: JSON.stringify({ error: 'not found' }),
       }
       callback(null, response)
@@ -48,6 +53,11 @@ export async function main(event, context, callback) {
 
     const response = {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+        'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+      },
       body: JSON.stringify({ error: 'Unable to retrieve a Photo' }),
     }
     callback(null, response)
@@ -60,6 +70,7 @@ export async function main(event, context, callback) {
     headers: {
       'Access-Control-Allow-Origin': '*', // Required for CORS support to work
       'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
     },
     body: JSON.stringify({ status: 'success', photo }),
   }
