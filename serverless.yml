@@ -166,7 +166,7 @@ functions:
     timeout: 59
     # memorySize: 300 # fails with the default options -- must give more memory
     events:
-      - schedule: rate(6 hours)
+      - schedule: rate(3 hours)
       # - http:
       #     path: photos/sitemap
       #     method: get
