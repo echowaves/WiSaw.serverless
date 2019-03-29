@@ -278,4 +278,4 @@ resources:
           Rules:
           - Id: ExpirationRule
             Status: Enabled
-            ExpirationInDays: '1000'
+            ExpirationInDays: '10000'
