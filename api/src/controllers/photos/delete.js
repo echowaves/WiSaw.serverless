@@ -1,4 +1,5 @@
 import Photo from '../../models/photo'
+import Watcher from '../../models/watcher'
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {
@@ -36,6 +37,8 @@ export async function main(event, context, callback) {
     //   callback(null, response)
     //   return
     // }
+
+    await Watcher.destroy({ where: { photoId: id } })
   } catch (err) {
     console.log('Unable to delete a Photo', err)
     const response = {

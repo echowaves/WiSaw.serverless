@@ -760,7 +760,7 @@ describe('photos', () => {
   })
 
   describe('watcher', () => {
-    it.only('should automatically start watching a newly uploaded photo', async () => {
+    it('should automatically start watching a newly uploaded photo', async () => {
       const guid = uuid()
 
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
@@ -780,22 +780,42 @@ describe('photos', () => {
     })
 
 
-    // it('should delete all watchers records for deleted photo', async () => {
-    //   const guid = uuid()
-    //
-    //   const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-    //
-    //   const photoResponse =
-    //   await request
-    //     .post('/photos')
-    //     .set('Content-Type', 'application/json')
-    //     .send({ uuid: guid })
-    //     .send({ location })
-    //
-    //   const watchers = await Watcher.findAll()
-    //
-    //   expect(response.status).to.equal(200)
-    //   expect(response.body.status).to.equal('success')
-    // })
+    it('should delete all watchers records for deleted photo', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photoResponse1 =
+      await request
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
+
+      const photoResponse2 =
+        await request
+          .post('/photos')
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ location })
+
+
+      let watchers = await Watcher.findAll()
+
+      expect(watchers.length).to.equal(2)
+      expect(watchers[0].uuid).to.equal(guid)
+      expect(watchers[1].uuid).to.equal(guid)
+      expect(watchers[0].photoId).to.equal(photoResponse1.body.photo.id)
+      expect(watchers[1].photoId).to.equal(photoResponse2.body.photo.id)
+
+      await request
+        .delete(`/photos/${photoResponse1.body.photo.id}`)
+        .set('Content-Type', 'application/json')
+
+      watchers = await Watcher.findAll()
+      expect(watchers.length).to.equal(1)
+      expect(watchers[0].uuid).to.equal(guid)
+      expect(watchers[0].photoId).to.equal(photoResponse2.body.photo.id)
+    })
   })
 })
