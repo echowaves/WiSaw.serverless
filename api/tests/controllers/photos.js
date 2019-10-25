@@ -10,6 +10,7 @@ import { config } from '../../../.env.test'
 import Photo from '../../src/models/photo'
 import ContactForm from '../../src/models/contactForm'
 import AbuseReport from '../../src/models/abuseReport'
+import Watcher from '../../src/models/watcher'
 
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
@@ -51,6 +52,9 @@ describe('photos', () => {
       where: {},
     })
     await AbuseReport.destroy({
+      where: {},
+    })
+    await Watcher.destroy({
       where: {},
     })
   })
@@ -590,7 +594,6 @@ describe('photos', () => {
     })
   })
 
-
   describe('like', () => {
     it('should be able to like a photo by id', async () => {
       const guid = uuid()
@@ -641,7 +644,6 @@ describe('photos', () => {
       expect(feedResponse.body.status).to.equal('success')
     })
 
-
     it('should not be able to like non existing photo by id', async () => {
       const response =
       await request
@@ -675,7 +677,6 @@ describe('photos', () => {
         .get('/photos/prev/123123123')
         .set('Content-Type', 'application/json')
       expect(response1.status).to.equal(200)
-
 
       const response2 =
       await request
@@ -728,7 +729,6 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
       expect(response1.status).to.equal(200)
 
-
       const response2 =
       await request
         .get(`/photos/next/${response1.body.photo.id}`)
@@ -757,5 +757,45 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
       expect(response3.status).to.equal(404)
     })
+  })
+
+  describe('watcher', () => {
+    it.only('should automatically start watching a newly uploaded photo', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photoResponse =
+      await request
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ location })
+
+      const watchers = await Watcher.findAll()
+
+      expect(watchers.length).to.equal(1)
+      expect(watchers[0].uuid).to.equal(guid)
+      expect(watchers[0].photoId).to.equal(photoResponse.body.photo.id)
+    })
+
+
+    // it('should delete all watchers records for deleted photo', async () => {
+    //   const guid = uuid()
+    //
+    //   const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+    //
+    //   const photoResponse =
+    //   await request
+    //     .post('/photos')
+    //     .set('Content-Type', 'application/json')
+    //     .send({ uuid: guid })
+    //     .send({ location })
+    //
+    //   const watchers = await Watcher.findAll()
+    //
+    //   expect(response.status).to.equal(200)
+    //   expect(response.body.status).to.equal('success')
+    // })
   })
 })

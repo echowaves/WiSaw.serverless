@@ -2,6 +2,7 @@ import moment from 'moment'
 
 import Photo from '../../models/photo'
 import AbuseReport from '../../models/abuseReport'
+import Watcher from '../../models/watcher'
 
 const AWS = require('aws-sdk')
 
@@ -74,6 +75,18 @@ export async function main(event, context, callback) {
     ACL: 'public-read',
   }
   const uploadURL = s3.getSignedUrl('putObject', s3Params)
+
+  // create and safe record
+  try {
+    await Watcher.create({
+      uuid,
+      photoId: photo.id,
+      createdAt,
+      updatedAt,
+    })
+  } catch (err) {
+    console.log('unable to create Watcher', err) // will still not fail the service as long as the photo got created
+  }
 
   // Resond to request indicating the photo was created
   const response = {

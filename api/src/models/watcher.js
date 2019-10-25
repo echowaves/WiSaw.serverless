@@ -1,7 +1,13 @@
 import Sequelize from 'sequelize'
 import { sequelize } from '../../../config/consts'
 
-const Watchers = sequelize.define('Watchers', {
+const Watcher = sequelize.define('Watcher', {
+  id: {
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+    type: Sequelize.INTEGER,
+  },
   photoId: {
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -25,4 +31,4 @@ const Watchers = sequelize.define('Watchers', {
 
 // Adding an instance level method
 
-export default Watchers
+export default Watcher
