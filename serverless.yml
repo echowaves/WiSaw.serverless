@@ -262,6 +262,15 @@ functions:
           path: photos/{id}/watchers
           method: delete
           private: false
+  watchesGet: # http endpoint
+    handler: api/src/controllers/watchers/read.main
+    description: (C'R'UD) - watcher
+    events:
+      - http:
+          path: photos/{id}/watchers/{uuid}
+          method: get
+          cors: true
+
 
 resources:
   Resources:

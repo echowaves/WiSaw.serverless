@@ -44,6 +44,7 @@ describe('watchers', () => {
       where: {},
     })
   })
+
   describe('create', () => {
     it('should not be able to create a watcher with no parameters', async () => {
       const response =
@@ -114,6 +115,40 @@ describe('watchers', () => {
 
       expect(response.status).to.equal(404)
       expect(response.body.error).to.equal('not found')
+    })
+  })
+
+  describe('read', () => {
+    it('should not be able to read a watcher with no parameters', async () => {
+      const response =
+      await request
+        .post('/photos/0/watchers')
+        .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(400)
+      expect(response.body.error).to.equal('parameters missing')
+    })
+
+    it('should be able to get a user\'s watcher for a photo ', async () => {
+      const guid = uuid()
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const photo = await createTestPhoto(location, 0)
+
+      await request
+        .post(`/photos/${photo.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+
+      const responseWatcher =
+      await request
+        .get(`/photos/${photo.id}/watchers/${guid}`)
+        .set('Content-Type', 'application/json')
+
+      expect(responseWatcher.status).to.equal(200)
+      expect(responseWatcher.body.status).to.equal('success')
+      expect(responseWatcher.body).to.have.property('watcher')
+      expect(responseWatcher.body.watcher.uuid).to.equal(guid)
+      expect(responseWatcher.body.watcher.photoId).to.equal(photo.id)
     })
   })
 })
