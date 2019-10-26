@@ -228,7 +228,7 @@ functions:
 
   commentsDelete: # http endpoint
     handler: api/src/controllers/comments/delete.main
-    description: (CRU'D') - comment
+    description: (CRU'D') - comments
     events:
       - http:
           path: comments/{id}
@@ -244,6 +244,24 @@ functions:
           method: get
           private: false
           cors: true
+
+  watchPhoto: # http endpoint
+    handler: api/src/controllers/watchers/create.main
+    description: ('C'RUD) - watchers
+    events:
+      - http:
+          path: photos/{id}/watchers
+          method: post
+          private: false
+
+  unwatchPhoto: # http endpoint
+    handler: api/src/controllers/watchers/delete.main
+    description: (CRU'D') - watchers
+    events:
+      - http:
+          path: photos/{id}/watchers
+          method: delete
+          private: false
 
 resources:
   Resources:
