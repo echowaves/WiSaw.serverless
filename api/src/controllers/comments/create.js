@@ -1,6 +1,7 @@
 import moment from 'moment'
 
 import Comment from '../../models/comment'
+import Watcher from '../../models/watcher'
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {
@@ -27,6 +28,7 @@ export async function main(event, context, callback) {
   }
   const createdAt = moment()
   const updatedAt = createdAt
+  const watchedAt = createdAt
 
   // create and safe record
   let comment
@@ -46,6 +48,29 @@ export async function main(event, context, callback) {
     }
     callback(null, response)
     return
+  }
+  // start watching this photo if it's not watched yet
+  try {
+    const watcher = await Watcher.findOne({ where: { photoId: id, uuid } })
+    if (!watcher) {
+      await Watcher.create({
+        photoId: id,
+        uuid,
+        createdAt,
+        updatedAt,
+        watchedAt,
+      })
+    } else {
+      Watcher.update({ watchedAt }, { where: { photoId: id, uuid } })
+    }
+  } catch (err) {
+    console.log('unable to watch photo when comment added', err)
+  }
+  // update all watchers
+  try {
+    await Watcher.update({ updatedAt }, { where: { photoId: id } })
+  } catch (err) {
+    console.log('unable to watch photo when comment added', err)
   }
 
   // Resond to request indicating the create contactForm was created

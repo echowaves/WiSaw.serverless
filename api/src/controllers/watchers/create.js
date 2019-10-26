@@ -25,6 +25,7 @@ export async function main(event, context, callback) {
   }
   const createdAt = moment()
   const updatedAt = createdAt
+  const watchedAt = createdAt
 
   // create and safe record
   let watcher
@@ -34,6 +35,7 @@ export async function main(event, context, callback) {
       uuid,
       createdAt,
       updatedAt,
+      watchedAt,
     })
   } catch (err) {
     console.log('unable to watch photo', err)

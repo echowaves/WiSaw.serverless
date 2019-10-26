@@ -45,6 +45,7 @@ export async function main(event, context, callback) {
 
   const createdAt = moment()
   const updatedAt = createdAt
+  const watchedAt = createdAt
 
   // create and safe record
   let photo
@@ -83,6 +84,7 @@ export async function main(event, context, callback) {
       photoId: photo.id,
       createdAt,
       updatedAt,
+      watchedAt,
     })
   } catch (err) {
     console.log('unable to create Watcher', err) // will still not fail the service as long as the photo got created

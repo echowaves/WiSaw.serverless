@@ -25,6 +25,10 @@ const Watcher = sequelize.define('Watcher', {
     allowNull: false,
     type: Sequelize.DATE,
   },
+  watchedAt: {
+    allowNull: false,
+    type: Sequelize.DATE,
+  },
 })
 
 // Adding a class level method
