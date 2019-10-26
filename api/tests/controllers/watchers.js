@@ -109,9 +109,9 @@ describe('watchers', () => {
       const guid = uuid()
       const response =
       await request
-        .delete('/comments/0')
+        .delete('/photos/0/watchers')
         .set('Content-Type', 'application/json')
-        .send({ deactivatedBy: guid })
+        .send({ uuid: guid })
 
       expect(response.status).to.equal(404)
       expect(response.body.error).to.equal('not found')
@@ -149,6 +149,31 @@ describe('watchers', () => {
       expect(responseWatcher.body).to.have.property('watcher')
       expect(responseWatcher.body.watcher.uuid).to.equal(guid)
       expect(responseWatcher.body.watcher.photoId).to.equal(photo.id)
+    })
+
+    it('should not be able to get a user\'s watcher for a photo after unwatched', async () => {
+      const guid = uuid()
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const photo = await createTestPhoto(location, 0)
+
+      await request
+        .post(`/photos/${photo.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+
+      await request
+        .delete(`/photos/${photo.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+
+      const responseWatcher =
+      await request
+        .get(`/photos/${photo.id}/watchers/${guid}`)
+        .set('Content-Type', 'application/json')
+
+
+      expect(responseWatcher.status).to.equal(404)
+      expect(responseWatcher.body.error).to.equal('Unable to find watcher')
     })
   })
 })

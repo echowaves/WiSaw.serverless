@@ -34,7 +34,14 @@ export async function main(event, context, callback) {
     callback(null, response)
     return
   }
-
+  if (numberOfWatchers === 0) {
+    const response = {
+      statusCode: 404,
+      body: JSON.stringify({ error: 'not found' }),
+    }
+    callback(null, response)
+    return
+  }
   // the comment was deteled
   const response = {
     statusCode: 200,
