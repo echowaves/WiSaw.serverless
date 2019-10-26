@@ -11,11 +11,11 @@ export async function main(event, context, callback) {
   if (!uuid || !id) {
     const response = {
       statusCode: 400,
-      headers: {
-        'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-        'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-      },
+      // headers: {
+      //   'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+      //   'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+      //   'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+      // },
       body: JSON.stringify({ error: 'parameters missing' }),
     }
     callback(null, response)
@@ -28,11 +28,11 @@ export async function main(event, context, callback) {
   } catch (err) {
     const response = {
       statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-        'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-      },
+      // headers: {
+      //   'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+      //   'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+      //   'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+      // },
       body: JSON.stringify({ error: 'Unable to find watcher' }),
     }
     callback(null, response)
@@ -42,11 +42,11 @@ export async function main(event, context, callback) {
   // the comment was deteled
   const response = {
     statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-      'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
-      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-    },
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+    //   'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+    //   'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+    // },
     body: JSON.stringify({ status: 'success', watcher }),
   }
   callback(null, response)
