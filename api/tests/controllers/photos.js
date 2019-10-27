@@ -11,6 +11,7 @@ import Photo from '../../src/models/photo'
 import ContactForm from '../../src/models/contactForm'
 import AbuseReport from '../../src/models/abuseReport'
 import Watcher from '../../src/models/watcher'
+import Comment from '../../src/models/comment'
 
 const request = supertest(config().HOST)
 const { expect } = chai // BDD/TDD assertion library
@@ -55,6 +56,9 @@ describe('photos', () => {
       where: {},
     })
     await Watcher.destroy({
+      where: {},
+    })
+    await Comment.destroy({
       where: {},
     })
   })
@@ -905,7 +909,6 @@ describe('photos', () => {
 
     it('should delete all watchers records for deleted photo', async () => {
       const guid = uuid()
-
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
       const photoResponse1 =
@@ -939,6 +942,45 @@ describe('photos', () => {
       expect(watchers.length).to.equal(1)
       expect(watchers[0].uuid).to.equal(guid)
       expect(watchers[0].photoId).to.equal(photoResponse2.body.photo.id)
+    })
+
+    it('should update all watchers when new comment is posted', async () => {
+      // create a photo with two watchers
+      const guid1 = uuid()
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photoResponse1 =
+      await request
+        .post('/photos')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid1 })
+        .send({ location })
+
+      const guid2 = uuid()
+      await request
+        .post(`/photos/${photoResponse1.body.photo.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid2 })
+      // check updatedAt for both.
+      const watchers = await Watcher.findAll()
+      expect(watchers.length).to.equal(2)
+      expect(watchers[0].updatedAt).to.not.equal(watchers[1].updatedAt)
+      // add comment to photo
+      const guid3 = uuid()
+      const comment = 'comment1'
+
+      await request
+        .post(`/photos/${photoResponse1.body.photo.id}/comments`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid3 })
+        .send({ comment })
+      // check updatedAt has changed for both watchers and is the same
+      const watchersUpdated = await Watcher.findAll()
+      expect(watchersUpdated.length).to.equal(3)
+      expect(watchersUpdated[0].updatedAt.toString())
+        .to.equal(watchersUpdated[1].updatedAt.toString())
+      expect(watchersUpdated[1].updatedAt.toString())
+        .to.equal(watchersUpdated[2].updatedAt.toString())
     })
   })
 })
