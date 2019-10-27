@@ -32,7 +32,7 @@ export async function main(event, context, callback) {
           'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
           'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
         },
-        body: JSON.stringify({ error: 'not found' }),
+        body: JSON.stringify({ error: `photo not found 2, id:${id}` }),
       }
       callback(null, response)
       return false

@@ -19,7 +19,7 @@ export async function main(event, context, cb) {
 
     // activate image
     const activateUrl = `${process.env.HOST}/photos/${name.replace('-thumb', '')}/activate`
-    // console.log({ activateUrl })
+    console.log({ activateUrl })
     await axios.put(activateUrl)
     cb(null, 'activating the image in DB')
     return true

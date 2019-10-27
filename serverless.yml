@@ -22,7 +22,7 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   region: us-east-1
   memorySize: 3008
   timeout: 30
@@ -113,6 +113,14 @@ functions:
           path: photos/feedByDate
           method: post
           private: false
+  # photosFeedForWatcherPost: # http endpoint
+  #   handler: api/src/controllers/photos/feed.forWatcher
+  #   description: retreive photos by date
+  #   events:
+  #     - http:
+  #         path: photos/feedForWatcher
+  #         method: post
+  #         private: false
 
   photosPost: # http endpoint, which creates a record in DB, generaes unique photo id and then genertes upload URL to eb used for direct s3 upload
     handler: api/src/controllers/photos/create.main
@@ -154,6 +162,10 @@ functions:
   photosThumbsGenerate:
     handler: api/src/controllers/photos/createThumb.main
     description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
+    # the image magic is not included with node 10 on aws. https://forums.aws.amazon.com/thread.jspa?messageID=906619&tstart=0
+    # runtime: nodejs8.10
+    layers:
+      - arn:aws:lambda:us-east-1:963958500685:layer:image-magick:1
     # memorySize: 300 # fails with the default options -- must give more memory
     events:
       - s3: # this will create the bucket

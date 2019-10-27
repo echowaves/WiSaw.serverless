@@ -21,7 +21,7 @@ export async function main(event, context, callback) {
     if (photo[0] === 0) {
       const response = {
         statusCode: 404,
-        body: JSON.stringify({ error: 'not found' }),
+        body: JSON.stringify({ error: 'not found 1' }),
       }
       callback(null, response)
       return

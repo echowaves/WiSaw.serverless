@@ -344,8 +344,131 @@ describe('photos', () => {
       expect(response.body.photos[0].likes).to.eq(3)
     })
   })
-
-
+  //
+  // describe('feed.forWatchers', () => {
+  //   it('should not be able to get a watchers feed with no parameters', async () => {
+  //     const response =
+  //     await request
+  //       .post('/photos/feedByDate')
+  //       .set('Content-Type', 'application/json')
+  //
+  //     expect(response.status).to.equal(400)
+  //     expect(response.body.error).to.equal('parameters missing')
+  //   })
+  //
+  //
+  //   it('should be able to query feed photos by specific date', async () => {
+  //     const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+  //     const timeZoneShiftHours = moment().utcOffset() / -60
+  //     // console.log({ timeZoneShiftHours })
+  //
+  //     createTestPhoto(location, 0)
+  //
+  //     createTestPhoto(location, 1)
+  //     createTestPhoto(location, 1)
+  //
+  //     createTestPhoto(location, 2)
+  //     createTestPhoto(location, 2)
+  //     createTestPhoto(location, 2)
+  //
+  //     const response =
+  //     await request
+  //       .post('/photos/feedByDate')
+  //       .set('Content-Type', 'application/json')
+  //       .send({ location })
+  //       .send({ daysAgo: 0 })
+  //       .send({ timeZoneShiftHours })
+  //
+  //     expect(response.status).to.equal(200)
+  //     expect(response.body.status).to.equal('success')
+  //
+  //     expect(response.body.photos.length).to.equal(1)
+  //     expect(response.body.photos[0]).to.have.property('commentsCount')
+  //     expect(response.body.photos[0].commentsCount).to.eq('0')
+  //     expect(response.body.photos[0]).to.have.property('id')
+  //     expect(response.body.photos[0]).to.have.property('uuid')
+  //     expect(response.body.photos[0]).to.have.property('location')
+  //     expect(response.body.photos[0]).to.have.property('createdAt')
+  //     expect(response.body.photos[0]).to.have.property('distance')
+  //     expect(response.body.photos[0]).to.have.property('getImgUrl')
+  //     expect(response.body.photos[0]).to.have.property('getThumbUrl')
+  //     expect(response.body.photos[0].active).to.eq(true)
+  //     expect(response.body.photos[0].likes).to.eq(3)
+  //
+  //     const response1 =
+  //     await request
+  //       .post('/photos/feedByDate')
+  //       .set('Content-Type', 'application/json')
+  //       .send({ location })
+  //       .send({ daysAgo: 1 })
+  //       .send({ timeZoneShiftHours })
+  //
+  //     expect(response1.status).to.equal(200)
+  //     expect(response1.body.status).to.equal('success')
+  //
+  //     expect(response1.body.photos.length).to.equal(2)
+  //
+  //     const response2 =
+  //     await request
+  //       .post('/photos/feedByDate')
+  //       .set('Content-Type', 'application/json')
+  //       .send({ location })
+  //       .send({ daysAgo: 2 })
+  //       .send({ timeZoneShiftHours })
+  //
+  //     expect(response2.status).to.equal(200)
+  //     expect(response2.body.status).to.equal('success')
+  //
+  //     expect(response2.body.photos.length).to.equal(3)
+  //   })
+  //
+  //
+  //   it('should show the right number of comments in the feedByDate photos', async () => {
+  //     const guid = uuid()
+  //
+  //     const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+  //     const timeZoneShiftHours = moment().utcOffset() / -60
+  //     // console.log({ timeZoneShiftHours })
+  //
+  //     const photo = await createTestPhoto(location, 0)
+  //
+  //     // add some comments here
+  //     const comments = ['comment1', 'comment2', 'comment3']
+  //     comments.forEach(async (comment) => {
+  //       await request
+  //         .post(`/photos/${photo.id}/comments`)
+  //         .set('Content-Type', 'application/json')
+  //         .send({ uuid: guid })
+  //         .send({ comment })
+  //     })
+  //     await sleep(500)
+  //
+  //     const response =
+  //     await request
+  //       .post('/photos/feedByDate')
+  //       .set('Content-Type', 'application/json')
+  //       .send({ location })
+  //       .send({ daysAgo: 0 })
+  //       .send({ timeZoneShiftHours })
+  //
+  //     expect(response.status).to.equal(200)
+  //     expect(response.body.status).to.equal('success')
+  //
+  //     expect(response.body.photos.length).to.equal(1)
+  //     expect(response.body.photos[0]).to.have.property('commentsCount')
+  //     expect(response.body.photos[0].commentsCount).to.eq('3')
+  //     expect(response.body.photos[0]).to.have.property('id')
+  //     expect(response.body.photos[0]).to.have.property('uuid')
+  //     expect(response.body.photos[0]).to.have.property('location')
+  //     expect(response.body.photos[0]).to.have.property('createdAt')
+  //     expect(response.body.photos[0]).to.have.property('distance')
+  //     expect(response.body.photos[0]).to.have.property('getImgUrl')
+  //     expect(response.body.photos[0]).to.have.property('getThumbUrl')
+  //     expect(response.body.photos[0].active).to.eq(true)
+  //     expect(response.body.photos[0].likes).to.eq(3)
+  //   })
+  // })
+  //
   describe('get', () => {
     it('should be able to get one photo by id', async () => {
       const guid = uuid()
@@ -473,7 +596,7 @@ describe('photos', () => {
 
 
       expect(response.status).to.equal(404)
-      expect(response.body.error).to.equal('not found')
+      expect(response.body.error).to.include('photo not found 2')
     })
   })
 
@@ -545,7 +668,7 @@ describe('photos', () => {
         .set('Content-Type', 'application/json')
 
       expect(response.status).to.equal(404)
-      expect(response.body.error).to.equal('not found')
+      expect(response.body.error).to.equal('not found 1')
     })
   })
 
