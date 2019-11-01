@@ -1,51 +1,56 @@
-import Sequelize from 'sequelize'
+import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../../../config/consts'
 
-const Photo = sequelize.define('Photo', {
+import Watcher from './watcher'
+
+export default class Photo extends Model {}
+
+Photo.init({
   id: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
   },
   uuid: {
-    type: Sequelize.UUID,
+    type: DataTypes.UUID,
     allowNull: false,
   },
   location: {
-    type: Sequelize.GEOMETRY('POINT'),
+    type: DataTypes.GEOMETRY('POINT'),
     allowNull: false,
   },
   likes: {
     allowNull: false,
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
   },
   createdAt: {
     allowNull: false,
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
   },
   updatedAt: {
     allowNull: false,
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
   },
   active: {
     allowNull: false,
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-}, {
-  getterMethods: {
-    getImgUrl() {
-      return `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${this.id}`
+  getImgUrl: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      return `${this.firstname} ${this.lastname}`
     },
-    getThumbUrl() {
+  },
+  getThumbUrl: {
+    type: DataTypes.VIRTUAL,
+    get() {
       return `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${this.id}-thumb`
     },
   },
+}, {
+  sequelize,
 })
 
-// Adding a class level method
-
-// Adding an instance level method
-
-export default Photo
+Photo.hasMany(Watcher, { foreignKey: 'photoId' })

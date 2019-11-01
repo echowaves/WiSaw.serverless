@@ -1,38 +1,40 @@
-import Sequelize from 'sequelize'
+import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../../../config/consts'
 
-const Watcher = sequelize.define('Watcher', {
+// import Photo from './photo'
+
+
+export default class Watcher extends Model {}
+Watcher.init({
   id: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
   },
   photoId: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
   },
   uuid: {
-    type: Sequelize.UUID,
+    type: DataTypes.UUID,
     allowNull: false,
   },
   createdAt: {
     allowNull: false,
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
   },
   updatedAt: {
     allowNull: false,
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
   },
   watchedAt: {
     allowNull: false,
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
   },
+}, {
+  sequelize,
 })
 
-// Adding a class level method
-
-// Adding an instance level method
-
-export default Watcher
+// Watcher.belongsTo(Photo)

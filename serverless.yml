@@ -113,14 +113,14 @@ functions:
           path: photos/feedByDate
           method: post
           private: false
-  # photosFeedForWatcherPost: # http endpoint
-  #   handler: api/src/controllers/photos/feed.forWatcher
-  #   description: retreive photos by date
-  #   events:
-  #     - http:
-  #         path: photos/feedForWatcher
-  #         method: post
-  #         private: false
+  photosFeedForWatcherPost: # http endpoint
+    handler: api/src/controllers/photos/feed.forWatcher
+    description: retreive photos for watcher
+    events:
+      - http:
+          path: photos/feedForWatcher
+          method: post
+          private: false
 
   photosPost: # http endpoint, which creates a record in DB, generaes unique photo id and then genertes upload URL to eb used for direct s3 upload
     handler: api/src/controllers/photos/create.main

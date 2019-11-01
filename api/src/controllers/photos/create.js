@@ -66,6 +66,7 @@ export async function main(event, context, callback) {
     callback(null, response)
     return false
   }
+  console.log({ photo })
 
   const s3 = new AWS.S3()
   const s3Params = {
@@ -78,8 +79,9 @@ export async function main(event, context, callback) {
   const uploadURL = s3.getSignedUrl('putObject', s3Params)
 
   // create and safe record
+  let watcher
   try {
-    await Watcher.create({
+    watcher = await Watcher.create({
       uuid,
       photoId: photo.id,
       createdAt,
@@ -89,7 +91,7 @@ export async function main(event, context, callback) {
   } catch (err) {
     console.log('unable to create Watcher', err) // will still not fail the service as long as the photo got created
   }
-
+  console.log({ watcher })
   // Resond to request indicating the photo was created
   const response = {
     statusCode: 201,

@@ -31,8 +31,8 @@ export async function main(event, context, callback) {
   let watcher
   try {
     watcher = await Watcher.create({
-      photoId: id,
       uuid,
+      photoId: id,
       createdAt,
       updatedAt,
       watchedAt,
@@ -41,12 +41,13 @@ export async function main(event, context, callback) {
     console.log('unable to watch photo', err)
     const response = {
       statusCode: 500,
-      body: JSON.stringify({ error: 'unable to watch photo' }),
+      body: JSON.stringify({ error: 'unable to watch photo', err }),
     }
     callback(null, response)
     return
   }
 
+  console.log({ watcher })
   // Resond to request indicating the create contactForm was created
   const response = {
     statusCode: 201,

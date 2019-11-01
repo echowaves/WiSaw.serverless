@@ -53,6 +53,7 @@ export async function main(event, context, callback) {
   try {
     const watcher = await Watcher.findOne({ where: { photoId: id, uuid } })
     if (!watcher) {
+      console.log(`creating a watcher for photoId:${id} and uuid:${uuid}`)
       await Watcher.create({
         photoId: id,
         uuid,
@@ -61,14 +62,27 @@ export async function main(event, context, callback) {
         watchedAt,
       })
     } else {
-      Watcher.update({ watchedAt }, { where: { photoId: id, uuid } })
+      console.log(`updating a watcher for photoId:${id} and uuid:${uuid}`)
+      watcher.watchedAt = watchedAt
+      await watcher.save()
     }
   } catch (err) {
     console.log('unable to watch photo when comment added', err)
   }
   // update all watchers
   try {
-    await Watcher.update({ updatedAt }, { where: { photoId: id } })
+    console.log(`updating all watchers for photoId:${id}`)
+    console.log(`setting updatedAt: ${updatedAt}`)
+    const rezult = await Watcher.update( // this should cause updatedAt to be updated
+      { photoId: id },
+      {
+        where: {
+          photoId: id,
+        },
+      },
+    )
+    console.log('updated all watchers')
+    console.log({ rezult })
   } catch (err) {
     console.log('unable to watch photo when comment added', err)
   }

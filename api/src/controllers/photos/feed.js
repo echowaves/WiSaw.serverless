@@ -2,6 +2,7 @@ import Sequelize from 'sequelize'
 import moment from 'moment'
 
 import Photo from '../../models/photo'
+import Watcher from '../../models/watcher'
 
 const { Op } = Sequelize
 
@@ -103,11 +104,9 @@ export async function byDate(event, context, callback) {
 
   const location = data ? data.location : null
   const daysAgo = data ? (data.daysAgo || 0) : 0
-  const timeZoneShiftHours = data ? (data.timeZoneShiftHours || 0) : 0 // defaults to UTC
 
   console.log('location:', location)
   console.log('daysAgo:', daysAgo)
-  console.log('timeZoneShiftHours:', timeZoneShiftHours)
 
   if (!data || !location) {
     console.log('setting status to 400')
@@ -138,13 +137,13 @@ export async function byDate(event, context, callback) {
   let photos
 
   try {
-    const utcDate = moment().startOf('day');
-    const currentDate = moment().startOf('day').add(timeZoneShiftHours, 'hours');
+    // const utcDate = moment().startOf('day');
+    const currentDate = moment()
 
     // if (utcDate.date() === currentDate.date()) {
     //   daysAgo += 1
     // }
-    console.log('utcDate: ', utcDate)
+    // console.log('utcDate: ', utcDate)
     console.log('currentDate: ', currentDate)
     console.log('daysAgo: ', daysAgo)
 
@@ -206,13 +205,13 @@ export async function forWatcher(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
   const data = JSON.parse(event.body)
-  console.log({ data })
 
   const pageNumber = data ? (data.pageNumber || 0) : 0
   const uuid = data ? data.uuid : null
 
+  console.log({ data })
 
-  if (!data || !pageNumber || !uuid) {
+  if (!data || !uuid) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -231,35 +230,17 @@ export async function forWatcher(event, context, callback) {
   try {
     photos = await Photo.findAll({
       where: {
-        createdAt: {
-          [Op.gte]: currentDate.clone()
-            .subtract(daysAgo, 'days'),
-          [Op.lte]: currentDate.clone().add(1, 'days')
-            .subtract(daysAgo, 'days'),
-        },
+        uuid,
         active: true,
       },
-      attributes: {
-        include: [
-          [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
-          // [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'creationDate'],
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
-        ],
-      },
-      order: Sequelize.col('distance'),
+      // include: [
+      //   { model: Watcher, where: { uuid } },
+      // ],
+      // order: [['Watcher.updatedAt', 'DESC']],
       limit,
       offset,
     })
     console.log('retrived photos:', photos.length)
-    // add img_url and thumb_url properties
-    // photos = dbPhotos.map((dbPhoto) => {
-    //   const photo = dbPhoto
-    //   photo.dataValues.img_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}`
-    //   photo.dataValues.thumb_url = `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${photo.id}-thumb`
-    //   // console.log({ photo })
-    //   return photo
-    // })
-    // console.log({ photos })
   } catch (err) {
     console.log('Unable to retrieve Photos feed', err)
     const response = {
@@ -269,7 +250,6 @@ export async function forWatcher(event, context, callback) {
     callback(null, response)
     return false
   }
-
 
   // Resond to request indicating the photo feed was created
   const response = {
