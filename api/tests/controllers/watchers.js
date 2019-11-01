@@ -46,7 +46,7 @@ async function createWatchedPhoto(location, daysAgo, guid = uuid()) {
   try {
     await Watcher.create({
       photoId: photo.id,
-      uudi: guid,
+      uuid: guid,
       createdAt,
       updatedAt,
       watchedAt,
