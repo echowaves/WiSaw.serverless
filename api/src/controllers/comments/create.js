@@ -26,9 +26,9 @@ export async function main(event, context, callback) {
     callback(null, response)
     return
   }
-  const createdAt = moment()
-  const updatedAt = createdAt
-  const watchedAt = createdAt
+  // const createdAt = moment()
+  // const updatedAt = createdAt
+  const watchedAt = moment()
 
   // create and safe record
   let comment
@@ -37,8 +37,8 @@ export async function main(event, context, callback) {
       photoId: id,
       uuid,
       comment: commentText,
-      createdAt,
-      updatedAt,
+      // createdAt,
+      // updatedAt,
     })
   } catch (err) {
     console.log('unable to create comment', err)
@@ -57,8 +57,8 @@ export async function main(event, context, callback) {
       await Watcher.create({
         photoId: id,
         uuid,
-        createdAt,
-        updatedAt,
+        // createdAt,
+        // updatedAt,
         watchedAt,
       })
     } else {
@@ -72,7 +72,6 @@ export async function main(event, context, callback) {
   // update all watchers
   try {
     console.log(`updating all watchers for photoId:${id}`)
-    console.log(`setting updatedAt: ${updatedAt}`)
     const rezult = await Watcher.update( // this should cause updatedAt to be updated
       { photoId: id },
       {

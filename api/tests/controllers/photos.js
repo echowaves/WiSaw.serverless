@@ -19,7 +19,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function createTestPhoto(location, daysAgo) {
+async function createTestPhoto(location, daysAgo) {
   const guid = uuid()
   const createdAt = moment().utc().subtract(daysAgo, 'days').add(3, 'minutes')
   const updatedAt = createdAt
@@ -28,7 +28,7 @@ function createTestPhoto(location, daysAgo) {
   // create and safe record
   let photo
   try {
-    photo = Photo.create({
+    photo = await Photo.create({
       uuid: guid,
       location,
       createdAt,
@@ -235,14 +235,14 @@ describe('photos', () => {
     it('should be able to query feed photos by specific date', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
-      createTestPhoto(location, 0)
+      await createTestPhoto(location, 0)
 
-      createTestPhoto(location, 1)
-      createTestPhoto(location, 1)
+      await createTestPhoto(location, 1)
+      await createTestPhoto(location, 1)
 
-      createTestPhoto(location, 2)
-      createTestPhoto(location, 2)
-      createTestPhoto(location, 2)
+      await createTestPhoto(location, 2)
+      await createTestPhoto(location, 2)
+      await createTestPhoto(location, 2)
 
       const response =
       await request

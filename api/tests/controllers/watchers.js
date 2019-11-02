@@ -17,8 +17,6 @@ function sleep(ms) {
 }
 
 async function createTestPhoto(location, daysAgo, guid = uuid()) {
-  const createdAt = moment().subtract(daysAgo, 'days').add(3, 'minutes')
-  const updatedAt = createdAt
   const active = true
   const likes = 3
   // create and safe record
@@ -27,8 +25,6 @@ async function createTestPhoto(location, daysAgo, guid = uuid()) {
     photo = await Photo.create({
       uuid: guid,
       location,
-      createdAt,
-      updatedAt,
       active,
       likes,
     })
@@ -39,21 +35,17 @@ async function createTestPhoto(location, daysAgo, guid = uuid()) {
 }
 
 async function createWatchedPhoto(location, daysAgo, guid = uuid()) {
-  const createdAt = moment().subtract(daysAgo, 'days').add(3, 'minutes')
-  const updatedAt = createdAt
-  const watchedAt = createdAt
-  const photo = createTestPhoto(location, daysAgo, guid)
+  const watchedAt = moment()
+  const photo = await createTestPhoto(location, daysAgo, guid)
+
   try {
     await Watcher.create({
       photoId: photo.id,
       uuid: guid,
-      createdAt,
-      updatedAt,
       watchedAt,
     })
   } catch (err) {
-    console.log('unable to create Photo', err)
-    return photo
+    console.log('unable to create Watcher', err)
   }
   return photo
 }
@@ -128,7 +120,7 @@ describe('watchers', () => {
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
-      expect(response.body.numberOfWatchers).to.equal(1)
+      expect(response.body.numberOfWatchers).to.equal(2)// 2 watchers deleted
     })
 
     it('should not be able to delete non existing watcher', async () => {
@@ -317,18 +309,18 @@ describe('watchers', () => {
   //     expect(response.body.error).to.equal('parameters missing')
   //   })
   //
-  //   it('should be able to query feed photos by specific watcher', async () => {
+  //   it.only('should be able to query feed photos by specific watcher', async () => {
   //     const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
   //     const guid = uuid()
   //
-  //     createWatchedPhoto(location, 0, guid)
+  //     await createWatchedPhoto(location, 0, guid)
   //
-  //     createWatchedPhoto(location, 1, guid)
-  //     createWatchedPhoto(location, 1, guid)
+  //     await createWatchedPhoto(location, 1, guid)
+  //     await createWatchedPhoto(location, 1, guid)
   //
-  //     createWatchedPhoto(location, 2, guid)
-  //     createWatchedPhoto(location, 2, guid)
-  //     createWatchedPhoto(location, 2, guid)
+  //     await createWatchedPhoto(location, 2, guid)
+  //     await createWatchedPhoto(location, 2, guid)
+  //     await createWatchedPhoto(location, 2, guid)
   //
   //     const response =
   //     await request
@@ -353,30 +345,6 @@ describe('watchers', () => {
   //     expect(response.body.photos[0]).to.have.property('getThumbUrl')
   //     expect(response.body.photos[0].active).to.eq(true)
   //     expect(response.body.photos[0].likes).to.eq(3)
-  //
-  //     const response1 =
-  //     await request
-  //       .post('/photos/feedByDate')
-  //       .set('Content-Type', 'application/json')
-  //       .send({ location })
-  //       .send({ daysAgo: 1 })
-  //
-  //     expect(response1.status).to.equal(200)
-  //     expect(response1.body.status).to.equal('success')
-  //
-  //     expect(response1.body.photos.length).to.equal(2)
-  //
-  //     const response2 =
-  //     await request
-  //       .post('/photos/feedByDate')
-  //       .set('Content-Type', 'application/json')
-  //       .send({ location })
-  //       .send({ daysAgo: 2 })
-  //
-  //     expect(response2.status).to.equal(200)
-  //     expect(response2.body.status).to.equal('success')
-  //
-  //     expect(response2.body.photos.length).to.equal(3)
   //   })
   //
   //
