@@ -311,7 +311,7 @@ describe('watchers', () => {
       expect(response.body.error).to.equal('parameters missing')
     })
 
-    it.only('should be able to query feed photos by specific watcher', async () => {
+    it('should be able to query feed photos by specific watcher', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
       const guid = uuid()
 
@@ -349,7 +349,7 @@ describe('watchers', () => {
     })
 
 
-    it('should show the right number of comments in the feedByDate photos', async () => {
+    it('should show the right number of comments in the feed.forWatchers photos', async () => {
       const guid = uuid()
 
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
@@ -369,10 +369,10 @@ describe('watchers', () => {
 
       const response =
       await request
-        .post('/photos/feedByDate')
+        .post('/photos/feedForWatcher')
         .set('Content-Type', 'application/json')
-        .send({ location })
-        .send({ daysAgo: 0 })
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
@@ -384,7 +384,6 @@ describe('watchers', () => {
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
       expect(response.body.photos[0]).to.have.property('createdAt')
-      expect(response.body.photos[0]).to.have.property('distance')
       expect(response.body.photos[0]).to.have.property('getImgUrl')
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
