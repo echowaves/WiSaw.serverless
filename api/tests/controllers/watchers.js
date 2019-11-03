@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize'
+
 import uuid from 'uuid'
 import moment from 'moment'
 
@@ -298,97 +300,95 @@ describe('watchers', () => {
     })
   })
 
-  // describe('feed.forWatchers', () => {
-  //   it('should not be able to get a watchers feed with no parameters', async () => {
-  //     const response =
-  //     await request
-  //       .post('/photos/feedForWatcher')
-  //       .set('Content-Type', 'application/json')
-  //
-  //     expect(response.status).to.equal(400)
-  //     expect(response.body.error).to.equal('parameters missing')
-  //   })
-  //
-  //   it.only('should be able to query feed photos by specific watcher', async () => {
-  //     const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-  //     const guid = uuid()
-  //
-  //     await createWatchedPhoto(location, 0, guid)
-  //
-  //     await createWatchedPhoto(location, 1, guid)
-  //     await createWatchedPhoto(location, 1, guid)
-  //
-  //     await createWatchedPhoto(location, 2, guid)
-  //     await createWatchedPhoto(location, 2, guid)
-  //     await createWatchedPhoto(location, 2, guid)
-  //
-  //     const response =
-  //     await request
-  //       .post('/photos/feedForWatcher')
-  //       .set('Content-Type', 'application/json')
-  //       .send({ uuid: guid })
-  //       .send({ pageNumber: 0 })
-  //
-  //
-  //     expect(response.status).to.equal(200)
-  //     expect(response.body.status).to.equal('success')
-  //
-  //     expect(response.body.photos.length).to.equal(1)
-  //     expect(response.body.photos[0]).to.have.property('commentsCount')
-  //     expect(response.body.photos[0].commentsCount).to.eq('0')
-  //     expect(response.body.photos[0]).to.have.property('id')
-  //     expect(response.body.photos[0]).to.have.property('uuid')
-  //     expect(response.body.photos[0]).to.have.property('location')
-  //     expect(response.body.photos[0]).to.have.property('createdAt')
-  //     expect(response.body.photos[0]).to.have.property('distance')
-  //     expect(response.body.photos[0]).to.have.property('getImgUrl')
-  //     expect(response.body.photos[0]).to.have.property('getThumbUrl')
-  //     expect(response.body.photos[0].active).to.eq(true)
-  //     expect(response.body.photos[0].likes).to.eq(3)
-  //   })
-  //
-  //
-  //   it('should show the right number of comments in the feedByDate photos', async () => {
-  //     const guid = uuid()
-  //
-  //     const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-  //
-  //     const photo = await createWatchedPhoto(location, 0, guid)
-  //
-  //     // add some comments here
-  //     const comments = ['comment1', 'comment2', 'comment3']
-  //     comments.forEach(async (comment) => {
-  //       await request
-  //         .post(`/photos/${photo.id}/comments`)
-  //         .set('Content-Type', 'application/json')
-  //         .send({ uuid: guid })
-  //         .send({ comment })
-  //     })
-  //     await sleep(500)
-  //
-  //     const response =
-  //     await request
-  //       .post('/photos/feedByDate')
-  //       .set('Content-Type', 'application/json')
-  //       .send({ location })
-  //       .send({ daysAgo: 0 })
-  //
-  //     expect(response.status).to.equal(200)
-  //     expect(response.body.status).to.equal('success')
-  //
-  //     expect(response.body.photos.length).to.equal(1)
-  //     expect(response.body.photos[0]).to.have.property('commentsCount')
-  //     expect(response.body.photos[0].commentsCount).to.eq('3')
-  //     expect(response.body.photos[0]).to.have.property('id')
-  //     expect(response.body.photos[0]).to.have.property('uuid')
-  //     expect(response.body.photos[0]).to.have.property('location')
-  //     expect(response.body.photos[0]).to.have.property('createdAt')
-  //     expect(response.body.photos[0]).to.have.property('distance')
-  //     expect(response.body.photos[0]).to.have.property('getImgUrl')
-  //     expect(response.body.photos[0]).to.have.property('getThumbUrl')
-  //     expect(response.body.photos[0].active).to.eq(true)
-  //     expect(response.body.photos[0].likes).to.eq(3)
-  //   })
-  // })
-  //
+  describe('feed.forWatchers', () => {
+    it('should not be able to get a watchers feed with no parameters', async () => {
+      const response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+
+      expect(response.status).to.equal(400)
+      expect(response.body.error).to.equal('parameters missing')
+    })
+
+    it.only('should be able to query feed photos by specific watcher', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const guid = uuid()
+
+      await createWatchedPhoto(location, 0, guid)
+
+      await createWatchedPhoto(location, 1, guid)
+      await createWatchedPhoto(location, 1, guid)
+
+      await createWatchedPhoto(location, 2, guid)
+      await createWatchedPhoto(location, 2, guid)
+      await createWatchedPhoto(location, 2, guid)
+
+      const response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.photos.length).to.equal(6)
+      expect(response.body.photos[0]).to.have.property('commentsCount')
+      expect(response.body.photos[0].commentsCount).to.eq('0')
+      expect(response.body.photos[0]).to.have.property('id')
+      expect(response.body.photos[0]).to.have.property('uuid')
+      expect(response.body.photos[0]).to.have.property('location')
+      expect(response.body.photos[0]).to.have.property('createdAt')
+      // expect(response.body.photos[0]).to.have.property('distance')
+      expect(response.body.photos[0]).to.have.property('getImgUrl')
+      expect(response.body.photos[0]).to.have.property('getThumbUrl')
+      expect(response.body.photos[0].active).to.eq(true)
+      expect(response.body.photos[0].likes).to.eq(3)
+    })
+
+
+    it('should show the right number of comments in the feedByDate photos', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photo = await createWatchedPhoto(location, 0, guid)
+
+      // add some comments here
+      const comments = ['comment1', 'comment2', 'comment3']
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+      await sleep(500)
+
+      const response =
+      await request
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+        .send({ daysAgo: 0 })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0]).to.have.property('commentsCount')
+      expect(response.body.photos[0].commentsCount).to.eq('3')
+      expect(response.body.photos[0]).to.have.property('id')
+      expect(response.body.photos[0]).to.have.property('uuid')
+      expect(response.body.photos[0]).to.have.property('location')
+      expect(response.body.photos[0]).to.have.property('createdAt')
+      expect(response.body.photos[0]).to.have.property('distance')
+      expect(response.body.photos[0]).to.have.property('getImgUrl')
+      expect(response.body.photos[0]).to.have.property('getThumbUrl')
+      expect(response.body.photos[0].active).to.eq(true)
+      expect(response.body.photos[0].likes).to.eq(3)
+    })
+  })
 })

@@ -233,10 +233,24 @@ export async function forWatcher(event, context, callback) {
         uuid,
         active: true,
       },
-      // include: [
-      //   { model: Watcher, where: { uuid } },
-      // ],
-      // order: [['Watcher.updatedAt', 'DESC']],
+      include: [
+        {
+          model: Watcher,
+          required: true,
+          where: { uuid },
+          // on: {
+          //   uuid: Sequelize.where(Sequelize.col('Watchers.uuid'), '=', Sequelize.col('Photos.uuid')),
+          //   photoId: Sequelize.where(Sequelize.col('Watchers.photoId'), '=', Sequelize.col('Photos.id')),
+          // },
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+        ],
+      },
+
+      order: [['Watchers', 'updatedAt', 'DESC']],
       limit,
       offset,
     })
