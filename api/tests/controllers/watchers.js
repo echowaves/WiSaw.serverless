@@ -1,5 +1,3 @@
-import { Sequelize } from 'sequelize'
-
 import uuid from 'uuid'
 import moment from 'moment'
 
@@ -348,7 +346,6 @@ describe('watchers', () => {
       expect(response.body.photos[0].likes).to.eq(3)
     })
 
-
     it('should show the right number of comments in the feed.forWatchers photos', async () => {
       const guid = uuid()
 
@@ -388,6 +385,76 @@ describe('watchers', () => {
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
       expect(response.body.photos[0].likes).to.eq(3)
+    })
+
+
+    it('should not include unwatched photo in the feed feed.forWatchers photos', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const guid = uuid()
+
+      const photo1 = await createWatchedPhoto(location, 0, guid)
+      await createWatchedPhoto(location, 1, guid)
+      await createWatchedPhoto(location, 1, guid)
+      await createWatchedPhoto(location, 2, guid)
+      await createWatchedPhoto(location, 2, guid)
+      const photo2 = await createWatchedPhoto(location, 2, guid)
+
+      // these photos will be watched by different watchers,
+      // since UUID is not the one we are interested in
+      const photo3 = await createWatchedPhoto(location, 0)
+      await createWatchedPhoto(location, 1)
+      await createWatchedPhoto(location, 1)
+      await createWatchedPhoto(location, 2)
+      const photo4 = await createWatchedPhoto(location, 2)
+      await createWatchedPhoto(location, 2)
+
+      const response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.photos.length).to.equal(6)
+
+      // lets unwatch few photos
+      await request
+        .delete(`/photos/${photo1.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+      await request
+        .delete(`/photos/${photo2.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        // these photos are not watched by this uuid so should really make no difference,
+        // but still will do it to make sure
+      await request
+        .delete(`/photos/${photo3.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+      await request
+        .delete(`/photos/${photo4.id}/watchers`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+
+      const response2 =
+        await request
+          .post('/photos/feedForWatcher')
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ pageNumber: 0 })
+
+      expect(response2.status).to.equal(200)
+      expect(response2.body.status).to.equal('success')
+
+      expect(response2.body.photos.length).to.equal(4)
+    })
+
+
+    it('should maintain the correct order in feed.forWatchers photos', async () => {
     })
   })
 })
