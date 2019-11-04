@@ -40,7 +40,7 @@ Photo.init({
   getImgUrl: {
     type: DataTypes.VIRTUAL,
     get() {
-      return `${this.firstname} ${this.lastname}`
+      return `https://s3.amazonaws.com/${process.env.IMAGE_BUCKET}/${this.id}`
     },
   },
   getThumbUrl: {
