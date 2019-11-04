@@ -207,6 +207,8 @@ export async function forWatcher(event, context, callback) {
   const data = JSON.parse(event.body)
 
   const pageNumber = data ? (data.pageNumber || 0) : 0
+  const limit = data ? (data.pageLimit || 100) : 100
+
   const uuid = data ? data.uuid : null
 
   console.log({ data })
@@ -221,7 +223,6 @@ export async function forWatcher(event, context, callback) {
     return false
   }
 
-  const limit = 100
   const offset = limit * pageNumber
 
   // retrieve photos
@@ -238,10 +239,6 @@ export async function forWatcher(event, context, callback) {
           model: Watcher,
           required: true,
           where: { uuid },
-          // on: {
-          //   uuid: Sequelize.where(Sequelize.col('Watchers.uuid'), '=', Sequelize.col('Photos.uuid')),
-          //   photoId: Sequelize.where(Sequelize.col('Watchers.photoId'), '=', Sequelize.col('Photos.id')),
-          // },
         },
       ],
       attributes: {

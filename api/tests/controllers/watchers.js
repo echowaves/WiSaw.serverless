@@ -16,7 +16,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function createTestPhoto(location, daysAgo, guid = uuid()) {
+async function createTestPhoto(location, guid = uuid()) {
   const active = true
   const likes = 3
   // create and safe record
@@ -34,9 +34,9 @@ async function createTestPhoto(location, daysAgo, guid = uuid()) {
   return photo
 }
 
-async function createWatchedPhoto(location, daysAgo, guid = uuid()) {
+async function createWatchedPhoto(location, guid = uuid()) {
   const watchedAt = moment()
-  const photo = await createTestPhoto(location, daysAgo, guid)
+  const photo = await createTestPhoto(location, guid)
 
   try {
     await Watcher.create({
@@ -77,7 +77,7 @@ describe('watchers', () => {
     it('should be able to watch a photo with right parameters', async () => {
       const guid = uuid()
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      const photo = await createWatchedPhoto(location, 0, guid)
+      const photo = await createWatchedPhoto(location, guid)
 
       const response =
       await request
@@ -105,7 +105,7 @@ describe('watchers', () => {
     it('should be able to unwatch', async () => {
       const guid = uuid()
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      const photo = await createWatchedPhoto(location, 0, guid)
+      const photo = await createWatchedPhoto(location, guid)
 
       await request
         .post(`/photos/${photo.id}/watchers`)
@@ -150,7 +150,7 @@ describe('watchers', () => {
     it('should be able to get a user\'s watcher for a photo ', async () => {
       const guid = uuid()
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      const photo = await createWatchedPhoto(location, 0, guid)
+      const photo = await createWatchedPhoto(location, guid)
 
       await request
         .post(`/photos/${photo.id}/watchers`)
@@ -172,7 +172,7 @@ describe('watchers', () => {
     it('should not be able to get a user\'s watcher for a photo after unwatched', async () => {
       const guid = uuid()
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
-      const photo = await createWatchedPhoto(location, 0, guid)
+      const photo = await createWatchedPhoto(location, guid)
 
       await request
         .post(`/photos/${photo.id}/watchers`)
@@ -309,18 +309,17 @@ describe('watchers', () => {
       expect(response.body.error).to.equal('parameters missing')
     })
 
+
     it('should be able to query feed photos by specific watcher', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
       const guid = uuid()
 
-      await createWatchedPhoto(location, 0, guid)
-
-      await createWatchedPhoto(location, 1, guid)
-      await createWatchedPhoto(location, 1, guid)
-
-      await createWatchedPhoto(location, 2, guid)
-      await createWatchedPhoto(location, 2, guid)
-      await createWatchedPhoto(location, 2, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
 
       const response =
       await request
@@ -331,7 +330,6 @@ describe('watchers', () => {
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
-
       expect(response.body.photos.length).to.equal(6)
       expect(response.body.photos[0]).to.have.property('commentsCount')
       expect(response.body.photos[0].commentsCount).to.eq('0')
@@ -351,7 +349,7 @@ describe('watchers', () => {
 
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
-      const photo = await createWatchedPhoto(location, 0, guid)
+      const photo = await createWatchedPhoto(location, guid)
 
       // add some comments here
       const comments = ['comment1', 'comment2', 'comment3']
@@ -392,21 +390,21 @@ describe('watchers', () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
       const guid = uuid()
 
-      const photo1 = await createWatchedPhoto(location, 0, guid)
-      await createWatchedPhoto(location, 1, guid)
-      await createWatchedPhoto(location, 1, guid)
-      await createWatchedPhoto(location, 2, guid)
-      await createWatchedPhoto(location, 2, guid)
-      const photo2 = await createWatchedPhoto(location, 2, guid)
+      const photo1 = await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      const photo2 = await createWatchedPhoto(location, guid)
 
       // these photos will be watched by different watchers,
       // since UUID is not the one we are interested in
-      const photo3 = await createWatchedPhoto(location, 0)
-      await createWatchedPhoto(location, 1)
-      await createWatchedPhoto(location, 1)
-      await createWatchedPhoto(location, 2)
-      const photo4 = await createWatchedPhoto(location, 2)
-      await createWatchedPhoto(location, 2)
+      const photo3 = await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      const photo4 = await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
 
       const response =
       await request
@@ -455,6 +453,97 @@ describe('watchers', () => {
 
 
     it('should maintain the correct order in feed.forWatchers photos', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const guid = uuid()
+
+      await createWatchedPhoto(location, guid)
+      const photo2 = await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      const photo4 = await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      const photo6 = await createWatchedPhoto(location, guid)
+
+      // these photos will be watched by different watchers,
+      // since UUID is not the one we are interested in
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+
+      let response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.body.photos[0].id).to.equal(photo6.id)
+
+      // lets update photo4
+      await request
+        .post(`/photos/${photo4.id}/comments`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ comment: 'test comment' })
+      response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.body.photos[0].id).to.equal(photo4.id)
+      expect(response.body.photos[1].id).to.equal(photo6.id)
+
+      // lets update photo2
+      await request
+        .post(`/photos/${photo2.id}/comments`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ comment: 'test comment' })
+      response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.body.photos[0].id).to.equal(photo2.id)
+      expect(response.body.photos[1].id).to.equal(photo4.id)
+      expect(response.body.photos[2].id).to.equal(photo6.id)
+    })
+
+
+    it('should paginate through  feed.forWatchers photos', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const guid = uuid()
+
+      for (let i = 0; i < 20; i++) { // eslint-disable-line no-plusplus
+        await createWatchedPhoto(location, guid) // eslint-disable-line no-await-in-loop
+      }
+
+
+      let response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+        .send({ pageLimit: 15 })
+
+      expect(response.body.photos.length).to.equal(15)
+
+      response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 1 })
+        .send({ pageLimit: 15 })
+
+      expect(response.body.photos.length).to.equal(5)
     })
   })
 })
