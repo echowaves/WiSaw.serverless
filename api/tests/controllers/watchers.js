@@ -419,6 +419,9 @@ describe('watchers', () => {
 
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
 
+      await createWatchedPhoto(location)
+      await createWatchedPhoto(location)
+
       const photo = await createWatchedPhoto(location)
 
       // add some comments here
@@ -444,6 +447,47 @@ describe('watchers', () => {
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0].uuid).to.not.eq(guid)
+    })
+
+
+    it('should order correctly photos that are commented on', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      await createWatchedPhoto(location, guid)
+      const photo1 = await createWatchedPhoto(location)
+      const photo2 = await createWatchedPhoto(location)
+      await createWatchedPhoto(location, guid)
+
+      // add some comments here
+      const comments = ['comment1', 'comment2', 'comment3']
+
+      await request
+        .post(`/photos/${photo2.id}/comments`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ comment: comments[0] })
+
+      await request
+        .post(`/photos/${photo1.id}/comments`)
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ comment: comments[1] })
+
+      const response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.photos.length).to.equal(4)
+      expect(response.body.photos[0].uuid).to.not.eq(guid)
+      expect(response.body.photos[0].id).to.eq(photo1.id)
     })
 
 
