@@ -233,7 +233,7 @@ export async function forWatcher(event, context, callback) {
   try {
     photos = await Photo.findAll({
       where: {
-        uuid,
+        // uuid,
         active: true,
       },
       include: [
@@ -248,7 +248,6 @@ export async function forWatcher(event, context, callback) {
           [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
         ],
       },
-
       order: [['Watchers', 'updatedAt', 'DESC']],
       limit,
       offset,

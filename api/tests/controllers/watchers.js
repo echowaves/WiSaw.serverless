@@ -414,6 +414,38 @@ describe('watchers', () => {
       expect(response.body.photos[0].likes).to.eq(3)
     })
 
+    it('should show watch photos that are commented on', async () => {
+      const guid = uuid()
+
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+
+      const photo = await createWatchedPhoto(location)
+
+      // add some comments here
+      const comments = ['comment1', 'comment2', 'comment3']
+      comments.forEach(async (comment) => {
+        await request
+          .post(`/photos/${photo.id}/comments`)
+          .set('Content-Type', 'application/json')
+          .send({ uuid: guid })
+          .send({ comment })
+      })
+      await sleep(500)
+
+      const response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.photos.length).to.equal(1)
+      expect(response.body.photos[0].uuid).to.not.eq(guid)
+    })
+
 
     it('should not include unwatched photo in the feed feed.forWatchers photos', async () => {
       const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
