@@ -266,6 +266,8 @@ describe('photos', () => {
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
       expect(response.body.photos[0].likes).to.eq(3)
+      expect(response.body.batch).to.equal(0)
+
 
       const response1 =
       await request
@@ -290,6 +292,28 @@ describe('photos', () => {
       expect(response2.body.status).to.equal('success')
 
       expect(response2.body.photos.length).to.equal(3)
+    })
+
+    it('should return the passed in batch number', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const batch = 123321
+
+      await createTestPhoto(location, 0)
+      await createTestPhoto(location, 0)
+      await createTestPhoto(location, 0)
+
+      const response =
+      await request
+        .post('/photos/feedByDate')
+        .set('Content-Type', 'application/json')
+        .send({ location })
+        .send({ daysAgo: 0 })
+        .send({ batch })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.batch).to.equal(batch)
     })
 
 

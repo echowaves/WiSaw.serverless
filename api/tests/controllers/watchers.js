@@ -342,7 +342,36 @@ describe('watchers', () => {
       expect(response.body.photos[0]).to.have.property('getThumbUrl')
       expect(response.body.photos[0].active).to.eq(true)
       expect(response.body.photos[0].likes).to.eq(3)
+      expect(response.body.batch).to.equal(0)
     })
+
+    it('should return the passed in batch number', async () => {
+      const location = { type: 'Point', coordinates: [-29.396377, -137.585190] }
+      const guid = uuid()
+
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+      await createWatchedPhoto(location, guid)
+
+      const batch = 123321
+
+      const response =
+      await request
+        .post('/photos/feedForWatcher')
+        .set('Content-Type', 'application/json')
+        .send({ uuid: guid })
+        .send({ pageNumber: 0 })
+        .send({ batch })
+
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('success')
+
+      expect(response.body.batch).to.equal(batch)
+    })
+
 
     it('should show the right number of comments in the feed.forWatchers photos', async () => {
       const guid = uuid()

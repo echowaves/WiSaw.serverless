@@ -104,6 +104,7 @@ export async function byDate(event, context, callback) {
 
   const location = data ? data.location : null
   const daysAgo = data ? (data.daysAgo || 0) : 0
+  const batch = data ? (data.batch || 0) : 0
 
   console.log('location:', location)
   console.log('daysAgo:', daysAgo)
@@ -192,7 +193,7 @@ export async function byDate(event, context, callback) {
   // Resond to request indicating the photo feed was created
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ status: 'success', photos }),
+    body: JSON.stringify({ status: 'success', batch, photos }),
   }
   callback(null, response)
   return true
@@ -210,6 +211,7 @@ export async function forWatcher(event, context, callback) {
   const limit = data ? (data.pageLimit || 100) : 100
 
   const uuid = data ? data.uuid : null
+  const batch = data ? (data.batch || 0) : 0
 
   console.log({ data })
 
@@ -265,7 +267,7 @@ export async function forWatcher(event, context, callback) {
   // Resond to request indicating the photo feed was created
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ status: 'success', photos }),
+    body: JSON.stringify({ status: 'success', batch, photos }),
   }
   callback(null, response)
   return true
