@@ -193,7 +193,7 @@ export async function byDate(event, context, callback) {
   // Resond to request indicating the photo feed was created
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ status: 'success', batch, photos }),
+    body: JSON.stringify({ status: 'success', batch, photos: photos.sort((a, b) => b.id - a.id) }),
   }
   callback(null, response)
   return true
