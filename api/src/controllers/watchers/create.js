@@ -13,6 +13,7 @@ export async function main(event, context, callback) {
   const data = JSON.parse(event.body)
 
   const uuid = data ? data.uuid : null
+  const watchedAt = moment()
 
   if (!data || !uuid || !id) {
     console.log('setting status to 400')
@@ -23,20 +24,37 @@ export async function main(event, context, callback) {
     callback(null, response)
     return
   }
-  const createdAt = moment()
-  const updatedAt = createdAt
-  const watchedAt = createdAt
+
+  // const watchedAt = moment()
 
   // create and safe record
   let watcher
   try {
-    watcher = await Watcher.create({
-      uuid,
-      photoId: id,
-      createdAt,
-      updatedAt,
-      watchedAt,
+    watcher = await Watcher.findOne({
+      where: {
+        uuid,
+        photoId: id,
+      },
     })
+    console.log({ watcher })
+    if (watcher === null) {
+      await Watcher.create({
+        uuid,
+        photoId: id,
+        watchedAt,
+      })
+    } else {
+      await Watcher.update(
+        { watchedAt },
+        {
+          where:
+          {
+            uuid,
+            photoId: id,
+          },
+        },
+      )
+    }
   } catch (err) {
     console.log('unable to watch photo', err)
     const response = {

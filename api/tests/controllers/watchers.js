@@ -120,7 +120,7 @@ describe('watchers', () => {
 
       expect(response.status).to.equal(200)
       expect(response.body.status).to.equal('success')
-      expect(response.body.numberOfWatchers).to.equal(2)// 2 watchers deleted
+      expect(response.body.numberOfWatchers).to.equal(1)// 1 watchers deleted
     })
 
     it('should not be able to delete non existing watcher', async () => {
