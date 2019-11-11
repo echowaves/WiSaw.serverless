@@ -8,7 +8,7 @@ import { exec } from 'child_process'
 export async function main(event, context, cb) {
   // define all the thumbnails that we want
   const widths = {
-    250: '-thumbnail 250x',
+    300: '-thumbnail x300', // converting to the height of 300
   }
 
   const record = event.Records[0];
