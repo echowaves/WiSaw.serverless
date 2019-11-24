@@ -208,7 +208,7 @@ export async function forWatcher(event, context, callback) {
   const data = JSON.parse(event.body)
 
   const pageNumber = data ? (data.pageNumber || 0) : 0
-  const limit = data ? (data.pageLimit || 100) : 100
+  const limit = data ? (data.pageLimit || 25) : 25
 
   const uuid = data ? data.uuid : null
   const batch = data ? (data.batch || 0) : 0
