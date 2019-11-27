@@ -47,6 +47,7 @@ export default class ImageAnalyser {
     } catch (err) {
       console.log('Error parsing image')
       console.log(err)
+      return null
     }
     return result
   }

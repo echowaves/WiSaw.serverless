@@ -36,8 +36,10 @@ export async function main(event, context, cb) {
     console.log('------------------------ called ImageAnalyser')
     console.log(JSON.stringify(metaData))
 
-    await Recognition.destroy({ where: { photoId } })
-    await Recognition.create({ photoId, metaData })
+    if (metaData) {
+      await Recognition.destroy({ where: { photoId } })
+      await Recognition.create({ photoId, metaData })
+    }
 
     cb(null, 'activating the image in DB')
     return true
