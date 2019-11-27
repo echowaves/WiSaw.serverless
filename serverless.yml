@@ -40,6 +40,10 @@ provider:
       Resource:
         - "arn:aws:s3:::${self:custom.web_bucket_name}"
         - "arn:aws:s3:::${self:custom.web_bucket_name}/*"
+    - Effect: "Allow"
+      Action:
+        - "rekognition:*"
+      Resource: "*"
 
   environment:
     DATABASE_URL: ${file(.env.${opt:stage}.js):config.DATABASE_URL}
@@ -159,9 +163,10 @@ functions:
           method: put
           private: false
 
-  photosThumbsGenerate:
-    handler: api/src/controllers/photos/createThumb.main
-    description: 'generates *.thumb image when ever a new image is uploaded to a bucket'
+  photosProcessUploaded:
+    handler: api/src/controllers/photos/processUploadedImage.main
+    description: 'when ever a new image is uploaded to a bucket, generates *.thumb image and parse image through image recognition'
+    timeout: 59
     # the image magic is not included with node 10 on aws. https://forums.aws.amazon.com/thread.jspa?messageID=906619&tstart=0
     # runtime: nodejs8.10
     layers:
@@ -274,7 +279,7 @@ functions:
           path: photos/{id}/watchers
           method: delete
           private: false
-          
+
   watchesGet: # http endpoint
     handler: api/src/controllers/watchers/read.main
     description: (C'R'UD) - watcher

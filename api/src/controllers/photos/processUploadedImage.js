@@ -4,6 +4,11 @@ import axios from 'axios'
 
 import { exec } from 'child_process'
 
+import Recognition from '../../models/recognition'
+
+import ImageAnalyser from '../../lib/imageAnalyser'
+
+
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, cb) {
   // define all the thumbnails that we want
@@ -14,13 +19,26 @@ export async function main(event, context, cb) {
   const record = event.Records[0];
   const name = record.s3.object.key
   // we only want to deal with originals
+  console.log(`received image: ${name}`)
   if (name.includes('-thumb')) {
     console.log('thumbnail uploaded, activating image')
-
+    const photoId = name.replace('-thumb', '')
     // activate image
-    const activateUrl = `${process.env.HOST}/photos/${name.replace('-thumb', '')}/activate`
+    const activateUrl = `${process.env.HOST}/photos/${photoId}/activate`
     console.log({ activateUrl })
     await axios.put(activateUrl)
+
+    console.log('------------------------ about to call ImageAnalyser')
+    const metaData = await ImageAnalyser.recognizeImage({
+      bucket: record.s3.bucket.name,
+      imageName: photoId,
+    })
+    console.log('------------------------ called ImageAnalyser')
+    console.log(JSON.stringify(metaData))
+
+    await Recognition.destroy({ where: { photoId } })
+    await Recognition.create({ photoId, metaData })
+
     cb(null, 'activating the image in DB')
     return true
   }
