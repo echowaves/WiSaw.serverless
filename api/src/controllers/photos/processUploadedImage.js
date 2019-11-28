@@ -8,6 +8,7 @@ import Recognition from '../../models/recognition'
 
 import ImageAnalyser from '../recognitions/imageAnalyser'
 
+const stringifyObject = require('stringify-object')
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, cb) {
@@ -34,7 +35,7 @@ export async function main(event, context, cb) {
       imageName: photoId,
     })
     console.log('------------------------ called ImageAnalyser')
-    console.log(JSON.stringify(metaData))
+    console.log(stringifyObject(metaData))
 
     if (metaData) {
       await Recognition.destroy({ where: { photoId } })
