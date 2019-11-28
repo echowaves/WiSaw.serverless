@@ -177,13 +177,13 @@ functions:
           bucket: ${self:custom.bucket_name}
           event: s3:ObjectCreated:*
 
-  photosRekognizeImages:
-    handler: api/src/controllers/photos/rekognizeImages.main
-    description: 'run image recognition on schedule'
-    timeout: 58
-    memorySize: 3008
-    events:
-      - schedule: rate(1 minute)
+  # photosRekognizeImages:
+  #   handler: api/src/controllers/recognitions/rekognizeImages.main
+  #   description: 'run image recognition on schedule'
+  #   timeout: 58
+  #   memorySize: 3008
+  #   events:
+  #     - schedule: rate(1 minute)
 
 
 
@@ -268,6 +268,16 @@ functions:
     events:
       - http:
           path: photos/{id}/comments
+          method: get
+          private: false
+          cors: true
+
+  recognitionsGet: # http endpoint
+    handler: api/src/controllers/recognitions/read.main
+    description: get recognitions for particular photo
+    events:
+      - http:
+          path: photos/{id}/recognitions
           method: get
           private: false
           cors: true
