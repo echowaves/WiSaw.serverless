@@ -177,6 +177,16 @@ functions:
           bucket: ${self:custom.bucket_name}
           event: s3:ObjectCreated:*
 
+  photosRekognizeImages:
+    handler: api/src/controllers/photos/rekognizeImages.main
+    description: 'run image recognition on schedule'
+    timeout: 58
+    memorySize: 3008
+    events:
+      - schedule: rate(1 minute)
+
+
+
   photosSitemapGenerate:
     handler: api/src/controllers/photos/createSiteMap.main
     description: 'generates sitemax.xml and uploads to a bucket'

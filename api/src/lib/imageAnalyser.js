@@ -37,13 +37,13 @@ export default class ImageAnalyser {
 
 
       result.Labels = labelsData.Labels
-      console.log(JSON.stringify(labelsData))
+      // console.log(JSON.stringify(labelsData))
 
       result.ModerationLabels = moderationData.ModerationLabels
-      console.log(JSON.stringify(moderationData))
+      // console.log(JSON.stringify(moderationData))
 
       result.TextDetections = textData.TextDetections
-      console.log(JSON.stringify(textData))
+      // console.log(JSON.stringify(textData))
     } catch (err) {
       console.log('Error parsing image')
       console.log(err)
