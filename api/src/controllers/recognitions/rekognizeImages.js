@@ -1,7 +1,7 @@
 import Recognition from '../../models/recognition'
 import Photo from '../../models/photo'
 
-import ImageAnalyser from '../../lib/imageAnalyser'
+import ImageAnalyser from './imageAnalyser'
 import { sequelize } from '../../../../config/consts'
 
 

@@ -6,7 +6,7 @@ import { exec } from 'child_process'
 
 import Recognition from '../../models/recognition'
 
-import ImageAnalyser from '../../lib/imageAnalyser'
+import ImageAnalyser from '../recognitions/imageAnalyser'
 
 
 // eslint-disable-next-line import/prefer-default-export
