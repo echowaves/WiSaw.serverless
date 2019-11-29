@@ -8,7 +8,7 @@ import { sequelize } from '../../../../config/consts'
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, cb) {
   const photos = await sequelize
-    .query('SELECT  * FROM "Photos" p WHERE active = true and p.id NOT IN (SELECT  "photoId" FROM    "Recognitions" r)  order by ID desc limit 25', {
+    .query('SELECT  * FROM "Photos" p WHERE active = true and p.id NOT IN (SELECT  "photoId" FROM    "Recognitions" r)  order by ID desc limit 40', {
       model: Photo,
       mapToModel: true, // pass true here if you have any mapped fields
     })
