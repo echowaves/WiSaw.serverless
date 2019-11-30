@@ -324,6 +324,7 @@ export async function forTextSearch(event, context, callback) {
           WHERE \
           to_tsvector('English', "comment"::text) @@ plainto_tsquery('English', '${term}') \
         ) \
+        order by id desc \
         limit ${limit} offset ${offset}`,
         // { replacements: { term, limit, offset }, type: sequelize.QueryTypes.SELECT },
         {
