@@ -128,6 +128,8 @@ functions:
   photosFeedForTextSearchPost: # http endpoint
     handler: api/src/controllers/photos/feed.forTextSearch
     description: retreive photos for full text search
+    timeout: 59
+    memorySize: 3008
     events:
       - http:
           path: photos/feedForTextSearch

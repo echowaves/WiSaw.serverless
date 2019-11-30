@@ -285,15 +285,13 @@ export async function forTextSearch(event, context, callback) {
   const data = JSON.parse(event.body)
 
   const pageNumber = data ? (data.pageNumber || 0) : 0
-  const limit = data ? (data.pageLimit || 100) : 100
+  const limit = data ? (data.pageLimit || 25) : 25
 
   const uuid = data ? data.uuid : null
   const batch = data ? (data.batch || 0) : 0
   const term = data ? data.term : null
 
-  console.log(stringifyObject(data, {
-    indent: '  ',
-  }))
+  console.log(JSON.stringify(data))
 
   if (!data || !uuid || !term || term.length < 2) {
     console.log('setting status to 400')
@@ -314,17 +312,20 @@ export async function forTextSearch(event, context, callback) {
     /* eslint-disable no-multi-str */
     photos = await sequelize
       .query(
-        'SELECT * from "Photos" where active = true and "id" in ( \
+        `SELECT p.*, (SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "p"."id" and "active" = true) as "commentsCount" \
+          FROM "Photos" p where active = true and "id" in ( \
           SELECT "photoId" \
           FROM "Recognitions" \
           WHERE \
-          to_tsvector(\'English\', "metaData"::text) @@ plainto_tsquery(\'English\', \'Cat\') \
+          to_tsvector('English', "metaData"::text) @@ plainto_tsquery('English', '${term}') \
         UNION \
           SELECT "photoId" \
           FROM "Comments" \
           WHERE \
-          to_tsvector(\'English\', "comment"::text) @@ plainto_tsquery(\'English\', \'Cat\') \
-        )',
+          to_tsvector('English', "comment"::text) @@ plainto_tsquery('English', '${term}') \
+        ) \
+        limit ${limit} offset ${offset}`,
+        // { replacements: { term, limit, offset }, type: sequelize.QueryTypes.SELECT },
         {
           model: Photo,
           mapToModel: true, // pass true here if you have any mapped fields
@@ -338,9 +339,14 @@ export async function forTextSearch(event, context, callback) {
         // },
         // limit,
         // offset,
+
       )
 
     console.log('retrived photos:', photos.length)
+    console.log(stringifyObject(photos, {
+      indent: '  ',
+      singleQuotes: false,
+    }))
   } catch (err) {
     console.log('Unable to retrieve Photos feed')
     console.log(JSON.stringify(err))

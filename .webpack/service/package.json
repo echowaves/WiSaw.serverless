@@ -1,0 +1,17 @@
+{
+  "name": "wisaw",
+  "version": "1.0.0",
+  "description": "Packaged externals for wisaw",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "source-map-support": "0.5.6",
+    "sequelize": "6.0.0-beta.3",
+    "babel-runtime": "6.26.0",
+    "moment": "2.24.0",
+    "pg": "7.4.3",
+    "pg-hstore": "2.3.2",
+    "lambda-log": "2.3.1",
+    "stringify-object": "3.3.0"
+  }
+}
