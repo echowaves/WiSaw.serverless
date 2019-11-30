@@ -331,16 +331,6 @@ export async function forTextSearch(event, context, callback) {
           model: Photo,
           mapToModel: true, // pass true here if you have any mapped fields
         },
-        // {
-        //   attributes: {
-        //     include: [
-        //       [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
-        //     ],
-        //   },
-        // },
-        // limit,
-        // offset,
-
       )
 
     console.log('retrived photos:', photos.length)
