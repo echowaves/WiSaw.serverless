@@ -125,6 +125,14 @@ functions:
           path: photos/feedForWatcher
           method: post
           private: false
+  photosFeedForTextSearchPost: # http endpoint
+    handler: api/src/controllers/photos/feed.forTextSearch
+    description: retreive photos for full text search
+    events:
+      - http:
+          path: photos/feedForTextSearch
+          method: post
+          private: false
 
   photosPost: # http endpoint, which creates a record in DB, generaes unique photo id and then genertes upload URL to eb used for direct s3 upload
     handler: api/src/controllers/photos/create.main

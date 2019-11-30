@@ -1,8 +1,12 @@
 import Sequelize from 'sequelize'
 import moment from 'moment'
 
+import { sequelize } from '../../../../config/consts'
+
 import Photo from '../../models/photo'
 import Watcher from '../../models/watcher'
+
+const stringifyObject = require('stringify-object')
 
 const { Op } = Sequelize
 
@@ -208,7 +212,7 @@ export async function forWatcher(event, context, callback) {
   const data = JSON.parse(event.body)
 
   const pageNumber = data ? (data.pageNumber || 0) : 0
-  const limit = data ? (data.pageLimit || 25) : 25
+  const limit = data ? (data.pageLimit || 100) : 100
 
   const uuid = data ? data.uuid : null
   const batch = data ? (data.batch || 0) : 0
@@ -264,6 +268,91 @@ export async function forWatcher(event, context, callback) {
   }
 
   // Resond to request indicating the photo feed was created
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({ status: 'success', batch, photos }),
+  }
+  callback(null, response)
+  return true
+}
+
+// eslint-disable-next-line import/prefer-default-export
+export async function forTextSearch(event, context, callback) {
+  // Instruct the lambda to exit immediately
+  // and not wait for node event loop to be empty.
+  context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
+
+  const data = JSON.parse(event.body)
+
+  const pageNumber = data ? (data.pageNumber || 0) : 0
+  const limit = data ? (data.pageLimit || 100) : 100
+
+  const uuid = data ? data.uuid : null
+  const batch = data ? (data.batch || 0) : 0
+  const term = data ? data.term : null
+
+  console.log(stringifyObject(data, {
+    indent: '  ',
+  }))
+
+  if (!data || !uuid || !term || term.length < 2) {
+    console.log('setting status to 400')
+    const response = {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'parameters missing' }),
+    }
+    callback(null, response)
+    return false
+  }
+
+  const offset = limit * pageNumber
+
+  // retrieve photos
+  let photos
+
+  try {
+    /* eslint-disable no-multi-str */
+    photos = await sequelize
+      .query(
+        'SELECT * from "Photos" where active = true and "id" in ( \
+          SELECT "photoId" \
+          FROM "Recognitions" \
+          WHERE \
+          to_tsvector(\'English\', "metaData"::text) @@ plainto_tsquery(\'English\', \'Cat\') \
+        UNION \
+          SELECT "photoId" \
+          FROM "Comments" \
+          WHERE \
+          to_tsvector(\'English\', "comment"::text) @@ plainto_tsquery(\'English\', \'Cat\') \
+        )',
+        {
+          model: Photo,
+          mapToModel: true, // pass true here if you have any mapped fields
+        },
+        // {
+        //   attributes: {
+        //     include: [
+        //       [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+        //     ],
+        //   },
+        // },
+        // limit,
+        // offset,
+      )
+
+    console.log('retrived photos:', photos.length)
+  } catch (err) {
+    console.log('Unable to retrieve Photos feed')
+    console.log(JSON.stringify(err))
+    const response = {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Unable to retrieve Photos feed' }),
+    }
+    callback(null, response)
+    return false
+  }
+
+  // Respond to request indicating the photo feed was created
   const response = {
     statusCode: 200,
     body: JSON.stringify({ status: 'success', batch, photos }),
