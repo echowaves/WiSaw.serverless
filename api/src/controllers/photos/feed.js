@@ -289,11 +289,11 @@ export async function forTextSearch(event, context, callback) {
 
   const uuid = data ? data.uuid : null
   const batch = data ? (data.batch || 0) : 0
-  const term = data ? data.term : null
+  const searchTerm = data ? data.searchTerm : null
 
   console.log(JSON.stringify(data))
 
-  if (!data || !uuid || !term || term.length < 2) {
+  if (!data || !uuid || !searchTerm || searchTerm.length < 2) {
     console.log('setting status to 400')
     const response = {
       statusCode: 400,
@@ -317,16 +317,16 @@ export async function forTextSearch(event, context, callback) {
           SELECT "photoId" \
           FROM "Recognitions" \
           WHERE \
-          to_tsvector('English', "metaData"::text) @@ plainto_tsquery('English', '${term}') \
+          to_tsvector('English', "metaData"::text) @@ plainto_tsquery('English', '${searchTerm}') \
         UNION \
           SELECT "photoId" \
           FROM "Comments" \
           WHERE \
-          to_tsvector('English', "comment"::text) @@ plainto_tsquery('English', '${term}') \
+          to_tsvector('English', "comment"::text) @@ plainto_tsquery('English', '${searchTerm}') \
         ) \
         order by id desc \
         limit ${limit} offset ${offset}`,
-        // { replacements: { term, limit, offset }, type: sequelize.QueryTypes.SELECT },
+        // { replacements: { searchTerm, limit, offset }, type: sequelize.QueryTypes.SELECT },
         {
           model: Photo,
           mapToModel: true, // pass true here if you have any mapped fields
