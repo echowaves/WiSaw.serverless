@@ -18,11 +18,12 @@ export async function main(event, context, callback) {
         id,
         active: true,
       },
-      attributes: {
-        include: [
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
-        ],
-      },
+      // attributes: {
+      //   include: [
+      //     [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments"
+      // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+      //   ],
+      // },
     })
     if (!photo) {
       const response = {

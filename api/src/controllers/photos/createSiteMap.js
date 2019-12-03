@@ -23,11 +23,12 @@ export async function main(event, context, cb) {
   try {
     photos = await Photo.findAll({
       where: { active: true },
-      attributes: {
-        include: [
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
-        ],
-      },
+      // attributes: {
+      //   include: [
+      //     [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments"
+      // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+      //   ],
+      // },
       order: [
         ['id', 'DESC'],
       ],

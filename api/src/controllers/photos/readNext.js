@@ -24,11 +24,12 @@ export async function main(event, context, callback) {
         id: { [Op.gt]: id },
         active: true,
       },
-      attributes: {
-        include: [
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
-        ],
-      },
+      // attributes: {
+      //   include: [
+      //     [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments"
+      // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+      //   ],
+      // },
       order: [
         ['id', 'ASC'],
       ],

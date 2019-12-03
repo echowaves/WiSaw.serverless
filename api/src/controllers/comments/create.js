@@ -2,6 +2,8 @@ import moment from 'moment'
 
 import Comment from '../../models/comment'
 import Watcher from '../../models/watcher'
+import UpdateCommentsCount from './updateCommentsCount'
+
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {
@@ -40,6 +42,7 @@ export async function main(event, context, callback) {
       // createdAt,
       // updatedAt,
     })
+    await UpdateCommentsCount.update(id)
   } catch (err) {
     console.log('unable to create comment', err)
     const response = {

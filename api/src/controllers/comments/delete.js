@@ -1,4 +1,5 @@
 import Comment from '../../models/comment'
+import UpdateCommentsCount from './updateCommentsCount'
 
 // eslint-disable-next-line import/prefer-default-export
 export async function main(event, context, callback) {
@@ -24,9 +25,9 @@ export async function main(event, context, callback) {
     return
   }
 
-  let comment
+  let comments
   try {
-    comment = await Comment.update(
+    comments = await Comment.update(
       {
         active: false,
         deactivatedBy,
@@ -34,7 +35,7 @@ export async function main(event, context, callback) {
       { where: { id } },
     )
 
-    if (comment[0] === 0) {
+    if (comments[0] === 0) {
       const response = {
         statusCode: 404,
         body: JSON.stringify({ error: 'not found' }),
@@ -42,6 +43,11 @@ export async function main(event, context, callback) {
       callback(null, response)
       return
     }
+
+    const comment = await Comment.findOne({
+      where: { id },
+    })
+    await UpdateCommentsCount.update(comment.photoId)
   } catch (err) {
     console.log('Unable to delete a Comment', err)
     const response = {

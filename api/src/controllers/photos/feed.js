@@ -57,7 +57,8 @@ export async function main(event, context, callback) {
       attributes: {
         include: [
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+          // [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments"
+          // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
         ],
       },
       // order: Sequelize.col('distance'),
@@ -166,7 +167,8 @@ export async function byDate(event, context, callback) {
         include: [
           [Sequelize.fn('ST_Distance', point, Sequelize.col('location')), 'distance'],
           // [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'creationDate'],
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+          // [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments"
+          // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
         ],
       },
       order: Sequelize.col('distance'),
@@ -247,11 +249,12 @@ export async function forWatcher(event, context, callback) {
           where: { uuid },
         },
       ],
-      attributes: {
-        include: [
-          [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
-        ],
-      },
+      // attributes: {
+      //   include: [
+      //     [Sequelize.literal('(SELECT COUNT("Comments") FROM "Comments"
+      // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
+      //   ],
+      // },
       order: [['Watchers', 'updatedAt', 'DESC']],
       limit,
       offset,
@@ -312,7 +315,7 @@ export async function forTextSearch(event, context, callback) {
     /* eslint-disable no-multi-str */
     photos = await sequelize
       .query(
-        `SELECT p.*, (SELECT COUNT("Comments") FROM "Comments" WHERE "Comments"."photoId" = "p"."id" and "active" = true) as "commentsCount" \
+        `SELECT p.* \
           FROM "Photos" p where active = true and "id" in ( \
           SELECT "photoId" \
           FROM "Recognitions" \
