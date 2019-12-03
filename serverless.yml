@@ -213,7 +213,7 @@ functions:
     timeout: 59
     memorySize: 3008
     events:
-      - schedule: rate(1 minute)
+      - schedule: rate(1 day)
 
 
   photosRemoveS3Trigger:
