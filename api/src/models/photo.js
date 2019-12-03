@@ -27,6 +27,7 @@ Photo.init({
   commentsCount: {
     allowNull: false,
     type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
   createdAt: {
     allowNull: false,

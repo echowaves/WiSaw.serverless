@@ -6,7 +6,7 @@ import { sequelize } from '../../../../config/consts'
 import Photo from '../../models/photo'
 import Watcher from '../../models/watcher'
 
-const stringifyObject = require('stringify-object')
+// const stringifyObject = require('stringify-object')
 
 const { Op } = Sequelize
 
@@ -105,7 +105,7 @@ export async function byDate(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false // eslint-disable-line no-param-reassign
 
   const data = JSON.parse(event.body)
-  console.log({ data })
+  // console.log({ data })
 
   const location = data ? data.location : null
   const daysAgo = data ? (data.daysAgo || 0) : 0
@@ -219,7 +219,7 @@ export async function forWatcher(event, context, callback) {
   const uuid = data ? data.uuid : null
   const batch = data ? (data.batch || 0) : 0
 
-  console.log({ data })
+  // console.log({ data })
 
   if (!data || !uuid) {
     console.log('setting status to 400')
@@ -294,7 +294,7 @@ export async function forTextSearch(event, context, callback) {
   const batch = data ? (data.batch || 0) : 0
   const searchTerm = data ? data.searchTerm : null
 
-  console.log(JSON.stringify(data))
+  // console.log(JSON.stringify(data))
 
   if (!data || !uuid || !searchTerm || searchTerm.length < 2) {
     console.log('setting status to 400')
@@ -337,10 +337,10 @@ export async function forTextSearch(event, context, callback) {
       )
 
     console.log('retrived photos:', photos.length)
-    console.log(stringifyObject(photos, {
-      indent: '  ',
-      singleQuotes: false,
-    }))
+    // console.log(stringifyObject(photos, {
+    //   indent: '  ',
+    //   singleQuotes: false,
+    // }))
   } catch (err) {
     console.log('Unable to retrieve Photos feed')
     console.log(JSON.stringify(err))
