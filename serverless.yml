@@ -195,19 +195,25 @@ functions:
     events:
       - schedule: rate(10000 days)
 
-
-
   photosSitemapGenerate:
     handler: api/src/controllers/photos/createSiteMap.main
     description: 'generates sitemax.xml and uploads to a bucket'
     timeout: 59
-    # memorySize: 300 # fails with the default options -- must give more memory
+    memorySize: 3008
     events:
       - schedule: rate(3 hours)
       # - http:
       #     path: photos/sitemap
       #     method: get
       #     private: false
+
+  adjustCommentsCount:
+    handler: api/src/controllers/comments/adjustCommentsCount.main
+    description: 'updates comments count'
+    timeout: 59
+    memorySize: 3008
+    events:
+      - schedule: rate(1 minute)
 
 
   photosRemoveS3Trigger:
