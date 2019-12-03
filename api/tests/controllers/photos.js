@@ -146,7 +146,7 @@ describe('photos', () => {
         .send({ location })
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('commentsCount')
-      expect(response.body.photos[0].commentsCount).to.eq('0')
+      expect(response.body.photos[0].commentsCount).to.eq(0)
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -204,7 +204,7 @@ describe('photos', () => {
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('commentsCount')
-      expect(response.body.photos[0].commentsCount).to.eq('3')
+      expect(response.body.photos[0].commentsCount).to.eq(3)
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -256,7 +256,7 @@ describe('photos', () => {
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('commentsCount')
-      expect(response.body.photos[0].commentsCount).to.eq('0')
+      expect(response.body.photos[0].commentsCount).to.eq(0)
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -347,7 +347,7 @@ describe('photos', () => {
 
       expect(response.body.photos.length).to.equal(1)
       expect(response.body.photos[0]).to.have.property('commentsCount')
-      expect(response.body.photos[0].commentsCount).to.eq('3')
+      expect(response.body.photos[0].commentsCount).to.eq(3)
       expect(response.body.photos[0]).to.have.property('id')
       expect(response.body.photos[0]).to.have.property('uuid')
       expect(response.body.photos[0]).to.have.property('location')
@@ -398,7 +398,7 @@ describe('photos', () => {
 
       expect(response.body.photo).to.have.property('id')
       expect(response.body.photo).to.have.property('commentsCount')
-      expect(response.body.photo.commentsCount).to.eq('0')
+      expect(response.body.photo.commentsCount).to.eq(0)
       expect(response.body.photo).to.have.property('uuid')
       expect(response.body.photo).to.have.property('location')
       expect(response.body.photo).to.have.property('getImgUrl')
@@ -463,7 +463,7 @@ describe('photos', () => {
 
       expect(response.body.photo).to.have.property('id')
       expect(response.body.photo).to.have.property('commentsCount')
-      expect(response.body.photo.commentsCount).to.eq('3')
+      expect(response.body.photo.commentsCount).to.eq(3)
       expect(response.body.photo).to.have.property('uuid')
       expect(response.body.photo).to.have.property('location')
       expect(response.body.photo).to.have.property('getImgUrl')
@@ -642,7 +642,7 @@ describe('photos', () => {
 
       expect(feedResponse.body.photos.length).to.equal(1)
       expect(feedResponse.body.photos[0]).to.have.property('commentsCount')
-      expect(feedResponse.body.photos[0].commentsCount).to.eq('0')
+      expect(feedResponse.body.photos[0].commentsCount).to.eq(0)
       expect(feedResponse.body.photos[0]).to.have.property('id')
       expect(feedResponse.body.photos[0]).to.have.property('uuid')
       expect(feedResponse.body.photos[0]).to.have.property('location')
@@ -699,7 +699,7 @@ describe('photos', () => {
 
       expect(response2.body.photo).to.have.property('id')
       expect(response2.body.photo).to.have.property('commentsCount')
-      expect(response2.body.photo.commentsCount).to.eq('0')
+      expect(response2.body.photo.commentsCount).to.eq(0)
       expect(response2.body.photo).to.have.property('uuid')
       expect(response2.body.photo).to.have.property('location')
       expect(response2.body.photo).to.have.property('getImgUrl')
@@ -750,7 +750,7 @@ describe('photos', () => {
 
       expect(response2.body.photo).to.have.property('id')
       expect(response2.body.photo).to.have.property('commentsCount')
-      expect(response2.body.photo.commentsCount).to.eq('0')
+      expect(response2.body.photo.commentsCount).to.eq(0)
       expect(response2.body.photo).to.have.property('uuid')
       expect(response2.body.photo).to.have.property('location')
       expect(response2.body.photo).to.have.property('getImgUrl')
