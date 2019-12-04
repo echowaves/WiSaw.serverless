@@ -255,7 +255,7 @@ export async function forWatcher(event, context, callback) {
       // WHERE "Comments"."photoId" = "Photo"."id" and "active" = true)'), 'commentsCount'],
       //   ],
       // },
-      order: [['Watchers', 'updatedAt', 'DESC']],
+      order: [['Watchers', 'watchedAt', 'DESC']],
       limit,
       offset,
     })
