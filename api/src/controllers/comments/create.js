@@ -75,8 +75,8 @@ export async function main(event, context, callback) {
   // update all watchers
   try {
     console.log(`updating all watchers for photoId:${id}`)
-    const rezult = await Watcher.update( // this should cause updatedAt to be updated
-      { photoId: id },
+    const rezult = await Watcher.update(
+      { watchedAt },
       {
         where: {
           photoId: id,
