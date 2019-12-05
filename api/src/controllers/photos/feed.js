@@ -253,6 +253,7 @@ export async function forWatcher(event, context, callback) {
       order: [[Watcher, 'watchedAt', 'DESC']],
       limit,
       offset,
+      subQuery: false,
     })
     console.log('retrived photos:', photos.length)
   } catch (err) {
