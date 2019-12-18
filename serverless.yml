@@ -97,9 +97,8 @@ functions:
     handler: api/src/controllers/photos/cleanup.main
     description: cleaning up abuse report periodically once an hour
     events:
-      - schedule:
-          rate: rate(1 hour)
-          enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
+      - schedule: rate(1 hour)
+        enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
 
   photosFeedPost: # http endpoint
     handler: api/src/controllers/photos/feed.main
@@ -194,6 +193,8 @@ functions:
     memorySize: 3008
     events:
       - schedule: rate(10000 days)
+        enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
+
 
   photosSitemapGenerate:
     handler: api/src/controllers/photos/createSiteMap.main
@@ -202,6 +203,8 @@ functions:
     memorySize: 3008
     events:
       - schedule: rate(3 hours)
+        enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
+
       # - http:
       #     path: photos/sitemap
       #     method: get
@@ -214,6 +217,8 @@ functions:
     memorySize: 3008
     events:
       - schedule: rate(1 day)
+        enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
+
 
 
   photosRemoveS3Trigger:

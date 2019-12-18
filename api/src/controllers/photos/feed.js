@@ -235,7 +235,6 @@ export async function forWatcher(event, context, callback) {
 
   // retrieve photos
   let photos
-
   try {
     photos = await Photo.findAll({
       where: {
