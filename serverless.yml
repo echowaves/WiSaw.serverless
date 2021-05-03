@@ -134,6 +134,7 @@ functions:
           path: photos/feedForTextSearch
           method: post
           private: false
+          cors: true
 
   photosPost: # http endpoint, which creates a record in DB, generaes unique photo id and then genertes upload URL to eb used for direct s3 upload
     handler: api/src/controllers/photos/create.main

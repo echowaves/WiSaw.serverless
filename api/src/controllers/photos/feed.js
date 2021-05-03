@@ -350,6 +350,12 @@ export async function forTextSearch(event, context, callback) {
   // Respond to request indicating the photo feed was created
   const response = {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+      'Access-Control-Allow-Credentials': false, // Required for cookies, authorization headers with HTTPS
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+      'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+    },
     body: JSON.stringify({ status: 'success', batch, photos }),
   }
   callback(null, response)
