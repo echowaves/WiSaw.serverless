@@ -320,7 +320,7 @@ export async function forTextSearch(event, context, callback) {
           SELECT "photoId" \
           FROM "Comments" \
           WHERE \
-          to_tsvector('English', "comment"::text) @@ plainto_tsquery('English', '${searchTerm}') \
+          active = true and to_tsvector('English', "comment"::text) @@ plainto_tsquery('English', '${searchTerm}') \
         ) \
         order by id desc \
         limit ${limit} offset ${offset}`,
