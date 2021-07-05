@@ -63,17 +63,17 @@ functions:
           method: get
           private: false
 
-  abuseReportPost: # http endpoint
-    handler: api/src/controllers/abuseReports/create.main
-    description: create an abuse report record
-    events:
-      - http:
-          path: abusereport
-          method: post
-          private: false
-          request:
-            parameters:
-              application/json: '{"uuid":{"type":"string"}}'
+  # abuseReportPost: # http endpoint
+  #   handler: api/src/controllers/abuseReports/create.main
+  #   description: create an abuse report record
+  #   events:
+  #     - http:
+  #         path: abusereport
+  #         method: post
+  #         private: false
+  #         request:
+  #           parameters:
+  #             application/json: '{"uuid":{"type":"string"}}'
 
   contactFormPost: # http endpoint
     handler: api/src/controllers/contactForms/create.main
