@@ -283,25 +283,25 @@ functions:
   #         method: delete
   #         private: false
 
-  # commentsList: # http endpoint
-  #   handler: api/src/controllers/comments/list.main
-  #   description: get all comments for particular photo
-  #   events:
-  #     - http:
-  #         path: photos/{id}/comments
-  #         method: get
-  #         private: false
-  #         cors: true
-  #
-  # recognitionsGet: # http endpoint
-  #   handler: api/src/controllers/recognitions/read.main
-  #   description: get recognitions for particular photo
-  #   events:
-  #     - http:
-  #         path: photos/{id}/recognitions
-  #         method: get
-  #         private: false
-  #         cors: true
+  commentsList: # http endpoint
+    handler: api/src/controllers/comments/list.main
+    description: get all comments for particular photo
+    events:
+      - http:
+          path: photos/{id}/comments
+          method: get
+          private: false
+          cors: true
+
+  recognitionsGet: # http endpoint
+    handler: api/src/controllers/recognitions/read.main
+    description: get recognitions for particular photo
+    events:
+      - http:
+          path: photos/{id}/recognitions
+          method: get
+          private: false
+          cors: true
 
   # watchPhoto: # http endpoint
   #   handler: api/src/controllers/watchers/create.main
