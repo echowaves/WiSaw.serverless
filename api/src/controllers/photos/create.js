@@ -71,7 +71,7 @@ export async function main(event, context, callback) {
   const s3 = new AWS.S3()
   const s3Params = {
     Bucket: process.env.IMAGE_BUCKET,
-    Key: `${photo.id}`,
+    Key: `${photo.id}.upload`,
     ContentType: 'image/jpeg',
     Expires: 60, // expires in 1 minute, after that request a new URL
     ACL: 'public-read',
