@@ -197,19 +197,19 @@ functions:
   #       enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
 
 
-  photosSitemapGenerate:
-    handler: api/src/controllers/photos/createSiteMap.main
-    description: 'generates sitemax.xml and uploads to a bucket'
-    timeout: 59
-    memorySize: 3008
-    events:
-      - schedule: rate(3 hours)
-        enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
-
-      # - http:
-      #     path: photos/sitemap
-      #     method: get
-      #     private: false
+  # photosSitemapGenerate:
+  #   handler: api/src/controllers/photos/createSiteMap.main
+  #   description: 'generates sitemax.xml and uploads to a bucket'
+  #   timeout: 59
+  #   memorySize: 3008
+  #   events:
+  #     - schedule: rate(3 hours)
+  #       enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
+  #
+  #     # - http:
+  #     #     path: photos/sitemap
+  #     #     method: get
+  #     #     private: false
 
   # adjustCommentsCount:
   #   handler: api/src/controllers/comments/adjustCommentsCount.main
