@@ -53,7 +53,7 @@ provider:
     STAGE: ${opt:stage}
 
 
-functions:
+# functions:
   # helloWorldGet: # just for testing purposes
   #   handler: api/src/controllers/hello_world.main
   #   description: greetings message for world
@@ -84,21 +84,21 @@ functions:
   #         method: post
   #         private: false
 
-  photosCleanupGet: # http endpoint
-    handler: api/src/controllers/photos/cleanup.main
-    description: cleaning up old photos
-    events:
-      - http:
-          path: photos/cleanup
-          method: get
-          private: false
-
-  photosCleanupSchedule: # the same as above (reusing the same function), but is invoked by a scheduler
-    handler: api/src/controllers/photos/cleanup.main
-    description: cleaning up abuse report periodically once an hour
-    events:
-      - schedule: rate(1 hour)
-        enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
+  # photosCleanupGet: # http endpoint
+  #   handler: api/src/controllers/photos/cleanup.main
+  #   description: cleaning up old photos
+  #   events:
+  #     - http:
+  #         path: photos/cleanup
+  #         method: get
+  #         private: false
+  #
+  # photosCleanupSchedule: # the same as above (reusing the same function), but is invoked by a scheduler
+  #   handler: api/src/controllers/photos/cleanup.main
+  #   description: cleaning up abuse report periodically once an hour
+  #   events:
+  #     - schedule: rate(1 hour)
+  #       enabled: ${self:custom.enabled.${opt:stage, self:provider.stage}}
 
   # photosFeedPost: # http endpoint
   #   handler: api/src/controllers/photos/feed.main
