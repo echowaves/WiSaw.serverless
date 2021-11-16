@@ -28,7 +28,7 @@
   },
   "homepage": "https://wisaw.com",
   "dependencies": {
-    "aws-sdk": "2.594.0",
+    "aws-sdk": "2.814.0",
     "axios": "0.19.0",
     "@babel/runtime": "7.7.7",
     "chai": "4.1.2",
